@@ -1,0 +1,2 @@
+
+add_executable(linked_list_sample_cpp linked_list_sample.cpp)
