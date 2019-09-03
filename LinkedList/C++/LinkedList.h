@@ -248,7 +248,7 @@ private:
     ///
     /// \return A pointer to the last node in the list, or nullptr if the list
     ///         is empty.
-    node_type *find_tail_node()
+    node_type *find_tail_node() const noexcept
     {
         if (is_empty())
             return nullptr;

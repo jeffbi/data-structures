@@ -1,5 +1,5 @@
 /// \file   linked_list.h
-/// \brief  structure definition and class declarations for a linked list in C.
+/// \brief  structure definition and function declarations for a linked list in C.
 /// \author Jeffrey K. Bienstadt
 /// \copyright  Copyright (c) 2019 Jeffrey K. Bienstadt
 

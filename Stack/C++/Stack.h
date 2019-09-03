@@ -57,8 +57,8 @@ public:
 
     /// \brief  Access the top item on the stack.
     ///
-    /// \return A reference to the top element in the stack.
-    T &top()
+    /// \return A const reference to the top element in the stack.
+    const T &top() const
     {
         return _head->_data;
     }
