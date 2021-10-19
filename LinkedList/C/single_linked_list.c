@@ -1,13 +1,13 @@
-/// \file   linked_list.c
+/// \file   single_linked_list.c
 /// \brief  Implementation of linked list in C.
 /// \author Jeffrey K. Bienstadt
 /// \copyright  Copyright (c) 2019 Jeffrey K. Bienstadt
 
 #include <stdlib.h> // for malloc/free
 
-#include "linked_list.h"
+#include "single_linked_list.h"
 
-/// \brief  Create a new linked-list node populated with the specified data.
+/// \brief  Create a new linked list node populated with the specified data.
 /// \param data The data to be carried by the new node.
 /// \return A pointer to a new ll_node structure.
 ///
@@ -17,9 +17,9 @@
 ///
 /// The new node is not yet part of a linked list. The node will have to be
 /// added to a list via one of the other functions.
-ll_node *list_create_node(int data)
+sll_node *sll_create_node(int data)
 {
-    ll_node *node = (ll_node *)malloc(sizeof(ll_node));
+    sll_node *node = (sll_node *)malloc(sizeof(sll_node));
 
     if (node != NULL)
     {
@@ -35,9 +35,9 @@ ll_node *list_create_node(int data)
 /// \param data     The data to find.
 /// \return On success returns a pointer to the first node containing the
 ///         desired data. On failure returns NULL.
-ll_node *list_find_data(ll_node *head, int data)
+sll_node *sll_find_data(sll_node *head, int data)
 {
-    ll_node *current = head;
+    sll_node *current = head;
 
     while (current != NULL)
     {
@@ -54,12 +54,12 @@ ll_node *list_find_data(ll_node *head, int data)
 /// \param head A pointer to the head node of the linked list to traverse.
 /// \return On success returns a pointer to the tail node of the list.
 ///         On failure returns NULL.
-ll_node *list_find_tail_node(ll_node *head)
+sll_node *sll_find_tail_node(sll_node *head)
 {
     if (head == NULL)
         return NULL;
 
-    ll_node *current = head;
+    sll_node *current = head;
     while (current->next != NULL)
         current = current->next;
 
@@ -73,12 +73,12 @@ ll_node *list_find_tail_node(ll_node *head)
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         appended node could become the new head of this list if the list
 //          is empty.
-ll_node *list_append_node(ll_node **head, ll_node *node)
+sll_node *sll_append_node(sll_node **head, sll_node *node)
 {
     if (*head == NULL)
         *head = node;
     else
-        list_find_tail_node(*head)->next = node;
+        sll_find_tail_node(*head)->next = node;
 
     return node;
 }
@@ -91,16 +91,16 @@ ll_node *list_append_node(ll_node **head, ll_node *node)
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         appended node could become the new head of this list if the list
 ///         is empty.
-ll_node *list_append_data(ll_node **head, int data)
+sll_node *sll_append_data(sll_node **head, int data)
 {
-    return list_append_node(head, list_create_node(data));
+    return sll_append_node(head, sll_create_node(data));
 }
 
 /// \brief  Inserts a node into the linked list, following a specified node.
 /// \param after    A pointer to the node after which the new node is to be inserted.
 /// \param node     A pointer to the node to be inserted.
 /// \return A pointer to the inserted node.
-ll_node *list_insert_node(ll_node *after, ll_node *node)
+sll_node *sll_insert_node(sll_node *after, sll_node *node)
 {
     node->next = after->next;
     after->next = node;
@@ -113,9 +113,9 @@ ll_node *list_insert_node(ll_node *after, ll_node *node)
 /// \param after    A pointer to the node after which the new node is to be inserted.
 /// \param data     The data to be stored in the created and inserted node.
 /// \return A pointer to the newly created and inserted node.
-ll_node *list_insert_data(ll_node *after, int data)
+sll_node *sll_insert_data(sll_node *after, int data)
 {
-    return list_insert_node(after, list_create_node(data));
+    return sll_insert_node(after, sll_create_node(data));
 }
 
 /// \brief  Inserts a new node at the beginning of the linked list. The new node
@@ -126,7 +126,7 @@ ll_node *list_insert_data(ll_node *after, int data)
 /// \return A pointer to the prepended node.
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         new node will become the new head of the linked list.
-ll_node *list_prepend_node(ll_node **head, ll_node *node)
+sll_node *sll_prepend_node(sll_node **head, sll_node *node)
 {
     node->next = *head;
     *head = node;
@@ -141,9 +141,9 @@ ll_node *list_prepend_node(ll_node **head, ll_node *node)
 /// \return A pointer to the newly created and prepended node.
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         new node will become the new head of the linked list.
-ll_node *list_prepend_data(ll_node **head, int data)
+sll_node *sll_prepend_data(sll_node **head, int data)
 {
-    return list_prepend_node(head, list_create_node(data));
+    return sll_prepend_node(head, sll_create_node(data));
 }
 
 /// \brief  Removes a node from a linked list.
@@ -153,7 +153,7 @@ ll_node *list_prepend_data(ll_node **head, int data)
 ///         node to be removed may be he head node, in which case we would need
 ///         to make the next node the new head node.
 /// \remark Memory allocated to the removed node is not freed.
-void list_remove_node(ll_node **head, ll_node *node)
+void sll_remove_node(sll_node **head, sll_node *node)
 {
     // Are we removing the head?
     if (node == *head)
@@ -163,20 +163,20 @@ void list_remove_node(ll_node **head, ll_node *node)
     }
     else
     {
-        ll_node *prev = *head;
+        sll_node *previous = *head;
 
         // Traverse the list looking for the node previous to the desired node.
-        while (prev->next != NULL)
+        while (previous->next != NULL)
         {
-            if (prev->next == node)
+            if (previous->next == node)
             {
                 // Unlink the node from the linked list
-                prev->next = node->next;
-                node->next = NULL;
+                previous->next = node->next;
+                previous->next = NULL;
                 return;
             }
 
-            prev = prev->next;
+            previous = previous->next;
         }
     }
 }
@@ -186,17 +186,17 @@ void list_remove_node(ll_node **head, ll_node *node)
 /// \remark The \p head parameter is a pointer to pointer. This is because the head
 ///         node will become NULL, indicating that the list is empty.
 /// \remark As each node is removed from the list its allocated memory is freed.
-void list_erase(ll_node **head)
+void sll_erase(sll_node **head)
 {
     // If the list is already embty, do nothing
     if (head == NULL || *head == NULL)
         return;
 
-    ll_node *current = *head;
+    sll_node *current = *head;
 
     while (current != NULL)
     {
-        ll_node *next = current->next;
+        sll_node *next = current->next;
 
         free(current);
         current = next;
