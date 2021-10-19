@@ -6,11 +6,11 @@ A linked list is a sequence of nodes, each containing the data to be stored and 
 
 The definition of the node structure is
 ```C
-typedef struct ll_node
+typedef struct _sll_node
 {
     int data;
-    struct ll_node *next;
-} ll_node;
+    struct _sll_node *next;
+} sll_node;
 ```
 This structure contains the node's data and a pointer to the next node in the list which is another structure of the same type. The tail node will have the `next` pointer set to `NULL`, indicating that there is no next node in the list.
 
