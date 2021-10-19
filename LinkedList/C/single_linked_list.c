@@ -50,7 +50,7 @@ sll_node *sll_find_data(sll_node *head, int data)
 }
 
 /// \brief  Traverse the linked list until the tail node (the last node in
-//          the list) is found.
+///         the list) is found.
 /// \param head A pointer to the head node of the linked list to traverse.
 /// \return On success returns a pointer to the tail node of the list.
 ///         On failure returns NULL.
@@ -72,7 +72,7 @@ sll_node *sll_find_tail_node(sll_node *head)
 /// \return A pointer to the appended node.
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         appended node could become the new head of this list if the list
-//          is empty.
+///         is empty.
 sll_node *sll_append_node(sll_node **head, sll_node *node)
 {
     if (*head == NULL)
@@ -188,7 +188,7 @@ void sll_remove_node(sll_node **head, sll_node *node)
 /// \remark As each node is removed from the list its allocated memory is freed.
 void sll_erase(sll_node **head)
 {
-    // If the list is already embty, do nothing
+    // If the list is already empty, do nothing
     if (head == NULL || *head == NULL)
         return;
 
