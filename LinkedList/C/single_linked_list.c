@@ -158,21 +158,21 @@ void sll_remove_node(sll_node **head, sll_node *node)
     // Are we removing the head?
     if (node == *head)
     {
-        (*head)->next = NULL;
         *head = (*head)->next;
+        node->next = NULL;
     }
     else
     {
         sll_node *previous = *head;
 
         // Traverse the list looking for the node previous to the desired node.
-        while (previous->next != NULL)
+        while (previous != NULL)
         {
             if (previous->next == node)
             {
                 // Unlink the node from the linked list
                 previous->next = node->next;
-                previous->next = NULL;
+                node->next = NULL;
                 return;
             }
 
