@@ -7,9 +7,9 @@
 
 #include "single_linked_list.h"
 
-/// \brief  Create a new linked list node populated with the specified data.
+/// \brief  Create a new singly-linked list node populated with the specified data.
 /// \param data The data to be carried by the new node.
-/// \return A pointer to a new ll_node structure.
+/// \return A pointer to a new sll_node structure.
 ///
 /// The node is created on the heap with malloc.
 ///
@@ -31,39 +31,36 @@ sll_node *sll_create_node(int data)
 }
 
 /// \brief  Search a linked list for a node that contains the specified data.
-/// \param head     A pointer to the head node of the linked list to search.
+/// \param start    A pointer to the node of the linked list to begin the search.
 /// \param data     The data to find.
 /// \return On success returns a pointer to the first node containing the
 ///         desired data. On failure returns NULL.
-sll_node *sll_find_data(sll_node *head, int data)
+sll_node *sll_find_data(sll_node *start, int data)
 {
-    sll_node *current = head;
-
-    while (current != NULL)
+    while (start != NULL)
     {
-        if (current->data == data)
+        if (start->data == data)
             break;
-        current = current->next;
+        start = start->next;
     }
 
-    return current;
+    return start;
 }
 
 /// \brief  Traverse the linked list until the tail node (the last node in
 ///         the list) is found.
-/// \param head A pointer to the head node of the linked list to traverse.
+/// \param start A pointer to the head node of the linked list to traverse.
 /// \return On success returns a pointer to the tail node of the list.
 ///         On failure returns NULL.
-sll_node *sll_find_tail_node(sll_node *head)
+sll_node *sll_find_tail_node(sll_node *start)
 {
-    if (head == NULL)
+    if (start == NULL)
         return NULL;
 
-    sll_node *current = head;
-    while (current->next != NULL)
-        current = current->next;
+    while (start->next != NULL)
+        start = start->next;
 
-    return current;
+    return start;
 }
 
 /// \brief  Appends a node to the end of the linked list.
