@@ -46,9 +46,9 @@ int main(void)
     traverse_list(list_head);
 
     // We can easily insert items into the middle of a list, without copying data.
-    sll_node *node = sll_insert_node(sll_find_data(list_head, 42),
-                                     sll_create_node(1001));
-    node = sll_insert_data(node, 94);
+    sll_node *node = sll_insert_node_after(sll_find_data(list_head, 42),
+                                           sll_create_node(1001));
+    node = sll_insert_data_after(node, 94);
     traverse_list(list_head);
 
     // We can remove a node from the list, also without copying data.
@@ -83,7 +83,7 @@ int main(void)
     then = time(NULL);
     sll_node *last = sll_find_tail_node(list_head);
     for (int i=0; i < 10000000; i++)
-        last = sll_insert_data(last, i);
+        last = sll_insert_data_after(last, i);
     now = time(NULL);
     printf("appending via insert took about %ld seconds\n", now - then);
 

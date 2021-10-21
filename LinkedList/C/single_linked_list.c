@@ -49,7 +49,7 @@ sll_node *sll_find_data(sll_node *start, int data)
 
 /// \brief  Traverse the linked list until the tail node (the last node in
 ///         the list) is found.
-/// \param start A pointer to the head node of the linked list to traverse.
+/// \param start A pointer to the node from which to begin the search.
 /// \return On success returns a pointer to the tail node of the list.
 ///         On failure returns NULL.
 sll_node *sll_find_tail_node(sll_node *start)
@@ -95,9 +95,10 @@ sll_node *sll_append_data(sll_node **head, int data)
 
 /// \brief  Inserts a node into the linked list, following a specified node.
 /// \param after    A pointer to the node after which the new node is to be inserted.
+///                 This parameter must not be NULL.
 /// \param node     A pointer to the node to be inserted.
 /// \return A pointer to the inserted node.
-sll_node *sll_insert_node(sll_node *after, sll_node *node)
+sll_node *sll_insert_node_after(sll_node *after, sll_node *node)
 {
     node->next = after->next;
     after->next = node;
@@ -110,9 +111,9 @@ sll_node *sll_insert_node(sll_node *after, sll_node *node)
 /// \param after    A pointer to the node after which the new node is to be inserted.
 /// \param data     The data to be stored in the created and inserted node.
 /// \return A pointer to the newly created and inserted node.
-sll_node *sll_insert_data(sll_node *after, int data)
+sll_node *sll_insert_data_after(sll_node *after, int data)
 {
-    return sll_insert_node(after, sll_create_node(data));
+    return sll_insert_node_after(after, sll_create_node(data));
 }
 
 /// \brief  Inserts a new node at the beginning of the linked list. The new node
