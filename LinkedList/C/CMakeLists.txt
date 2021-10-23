@@ -1,14 +1,6 @@
-
-set(LIBNAME "single_linked_list")
-
-list(APPEND SOURCES
-    single_linked_list.c
-)
-
-list(APPEND HEADERS
-    single_linked_list.h
-)
-
-add_library("${LIBNAME}" ${LIB_TYPE} ${HEADERS} ${SOURCES})
+add_library("linked_list" ${LIB_TYPE}
+            single_linked_list.h single_linked_list.c
+            double_linked_list.h double_linked_list.c
+           )
 
 add_subdirectory(sample)
