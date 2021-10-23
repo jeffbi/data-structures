@@ -118,14 +118,22 @@ void test_singly_linked_list()
     for (int i=0; i < 10000000; i++)
         sll_prepend_data(&list_head, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("prepending took about %lld seconds\n", now - then);
+#else
     printf("prepending took about %ld seconds\n", now - then);
+#endif
 
     printf("appending just 500 elements (this can take quite a while)\n");
     then = time(NULL);
     for (int i=0; i < 500; i++)
         sll_append_data(&list_head, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("appending took about %lld seconds\n", now - then);
+#else
     printf("appending took about %ld seconds\n", now - then);
+#endif
 
     // A faster way to append a lot of elements, using insert
     printf("appending 10,000,000 elements using insert\n");
@@ -134,18 +142,30 @@ void test_singly_linked_list()
     for (int i=0; i < 10000000; i++)
         last = sll_insert_data_after(last, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("appending via insert took about %lld seconds\n", now - then);
+#else
     printf("appending via insert took about %ld seconds\n", now - then);
+#endif
 
     then = time(NULL);
     count = count_single_list(list_head);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("counting (%u nodes) took about %lld seconds\n", count, now - then);
+#else
     printf("counting (%u nodes) took about %ld seconds\n", count, now - then);
+#endif
 
     printf("erasing 20,000,500 elements\n");
     then = time(NULL);
     sll_erase(&list_head);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("erasing took about %lld seconds\n", now - then);
+#else
     printf("erasing took about %ld seconds\n", now - then);
+#endif
 }
 
 void test_doubly_linked_list()
@@ -203,14 +223,22 @@ void test_doubly_linked_list()
     for (int i=0; i < 10000000; i++)
         dll_prepend_data(&list_head, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("prepending took about %lld seconds\n", now - then);
+#else
     printf("prepending took about %ld seconds\n", now - then);
+#endif
 
     printf("appending just 500 elements (this can take quite a while)\n");
     then = time(NULL);
     for (int i=0; i < 500; i++)
         dll_append_data(&list_head, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("appending took about %lld seconds\n", now - then);
+#else
     printf("appending took about %ld seconds\n", now - then);
+#endif
 
     // A faster way to append a lot of elements, using insert
     printf("appending 10,000,000 elements using insert\n");
@@ -219,27 +247,43 @@ void test_doubly_linked_list()
     for (int i=0; i < 10000000; i++)
         last = dll_insert_data_after(last, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("appending via insert took about %lld seconds\n", now - then);
+#else
     printf("appending via insert took about %ld seconds\n", now - then);
+#endif
 
     // We can traverse the entire list, both forward...
     // (we'll use count_double_list, it's quieter)
     then = time(NULL);
     count = count_double_list(list_head, DLL_FORWARD);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("counting forward (%u nodes) took about %lld seconds\n", count, now - then);
+#else
     printf("counting forward (%u nodes) took about %ld seconds\n", count, now - then);
+#endif
 
     // ...and backward
     last = dll_find_tail_node(list_head);
     then = time(NULL);
     count = count_double_list(last, DLL_BACKWARD);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("counting backward (%u nodes) took about %lld seconds\n", count, now - then);
+#else
     printf("counting backward (%u nodes) took about %ld seconds\n", count, now - then);
+#endif
 
     printf("erasing 20,000,500 elements\n");
     then = time(NULL);
     dll_erase(&list_head);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("erasing took about %lld seconds\n", now - then);
+#else
     printf("erasing took about %ld seconds\n", now - then);
+#endif
 }
 
 int main(void)

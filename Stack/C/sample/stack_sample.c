@@ -149,28 +149,43 @@ int main(void)
     for (int i=0; i < 10000000; i++)
         stack_push(stack, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("pushing took about %lld seconds\n", now - then);
+#else
     printf("pushing took about %ld seconds\n", now - then);
+#endif
 
     printf("popping 10,000,000 elements off the stack\n");
     then = time(NULL);
     for (int i=0; i < 10000000; i++)
         stack_pop(stack);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("popping took about %lld seconds\n", now - then);
+#else
     printf("popping took about %ld seconds\n", now - then);
+#endif
 
     printf("again pushing 10,000,000 elements onto the stack\n");
     then = time(NULL);
     for (int i=0; i < 10000000; i++)
         stack_push(stack, i);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("pushing took about %lld seconds\n", now - then);
+#else
     printf("pushing took about %ld seconds\n", now - then);
+#endif
 
     printf("deleting a stack with 10,000,000 elements\n");
     then = time(NULL);
     stack_delete(stack);
     now = time(NULL);
+#if defined(_MSC_VER)
+    printf("deleting took about %lld seconds\n", now - then);
+#else
     printf("deleting took about %ld seconds\n", now - then);
-
+#endif
 
     // evaluate a postfix expresion.
     evaluate_postfix("9 2 8 * + 3 - 2 /", 11);

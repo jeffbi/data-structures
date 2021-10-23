@@ -44,45 +44,43 @@ int main()
 
     std::chrono::high_resolution_clock::time_point dthen;
 
-    {
-        LinkedList<int> list2;
+    LinkedList<int> list2;
 
-        std::cout << "prepending 10,000,000 elements\n";
-        auto then = std::chrono::high_resolution_clock::now();
-        // prepend 10 million elements to the front of the list
-        for (int i=0; i < 10000000; ++i)
-            list2.prepend(i);
-        auto now = std::chrono::high_resolution_clock::now();
+    std::cout << "prepending 10,000,000 elements\n";
+    auto then = std::chrono::high_resolution_clock::now();
+    // prepend 10 million elements to the front of the list
+    for (int i=0; i < 10000000; ++i)
+        list2.prepend(i);
+    auto now = std::chrono::high_resolution_clock::now();
 
-        std::cout << "prepending took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
-                  << " milliseconds\n";
+    std::cout << "prepending took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
+              << " milliseconds\n";
 
-        std::cout << "appending just 500 elements (this can take several minutes)\n";
-        then = std::chrono::high_resolution_clock::now();
-        for (int i=0; i < 500; ++i)
-            list2.append(i);
-        now = std::chrono::high_resolution_clock::now();
+    std::cout << "appending just 500 elements (this can take several minutes)\n";
+    then = std::chrono::high_resolution_clock::now();
+    for (int i=0; i < 500; ++i)
+        list2.append(i);
+    now = std::chrono::high_resolution_clock::now();
 
-        std::cout << "appending took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
-                  << " milliseconds\n";
+    std::cout << "appending took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
+              << " milliseconds\n";
 
 
-        // A faster way to append a lot of elements, using insert_after
-        std::cout << "appending 10,000,000 elements using insert_after\n";
-        then = std::chrono::high_resolution_clock::now();
-        auto it = list2.tail();
-        for (int i=0; i < 10000000; i++)
-            it = list.insert_after(it, i);
-        now = std::chrono::high_resolution_clock::now();
+    // A faster way to append a lot of elements, using insert_after
+    std::cout << "appending 10,000,000 elements using insert_after\n";
+    then = std::chrono::high_resolution_clock::now();
+    it = list2.tail();
+    for (int i=0; i < 10000000; i++)
+        it = list.insert_after(it, i);
+    now = std::chrono::high_resolution_clock::now();
 
-        std::cout << "appending via insert_after took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
-                  << " milliseconds\n";
+    std::cout << "appending via insert_after took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count()
+              << " milliseconds\n";
 
-        dthen = std::chrono::high_resolution_clock::now();
-    }
+    dthen = std::chrono::high_resolution_clock::now();
 
     auto dnow = std::chrono::high_resolution_clock::now();
 
