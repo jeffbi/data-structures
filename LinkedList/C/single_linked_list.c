@@ -153,6 +153,9 @@ sll_node *sll_prepend_data(sll_node **head, int data)
 /// \remark Memory allocated to the removed node is not freed.
 void sll_remove_node(sll_node **head, sll_node *node)
 {
+    if (*head == NULL)
+        return; // Empty list, do nothing
+
     // Are we removing the head?
     if (node == *head)
     {
