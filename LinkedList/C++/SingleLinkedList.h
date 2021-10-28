@@ -59,10 +59,10 @@ public:
         Iterator(const Iterator &) = default;
         Iterator & operator=(const Iterator &) = default;
 
-        /// \brief  Dereference the iterator, getting access to the underlying data.
+        /// \brief  Dereference the iterator, gaining access to the underlying data.
         ///
         /// \return A reference to the data pointed to by this iterator.
-        const T & operator*() const noexcept
+        T & operator*() const noexcept
         {
             return _node->_data;
         }
@@ -70,7 +70,7 @@ public:
         /// \brief  Use pointer-like arrow operator to access members of the underlying data.
         ///
         /// \return A pointer to the underlying data.
-        const T * operator->() const noexcept
+        T * operator->() const noexcept
         {
             return &_node->_data;
         }
@@ -91,7 +91,7 @@ public:
         /// \return An iterator pointing to the next item in the linked list.
         Iterator operator++(int) noexcept
         {
-            Iterator tmp = *this;
+            Iterator tmp{*this};
             ++*this;
             return tmp;
         }
@@ -128,6 +128,9 @@ public:
     /// \brief  Default-construct an empty SingleLinkedList.
     SingleLinkedList() noexcept = default;
 
+    SingleLinkedList(const SingleLinkedList &) = delete;
+    SingleLinkedList & operator=(const SingleLinkedList &) = delete;
+
     /// \brief  Destroy a Linked List.
     ///
     /// Any contained nodes will be removed and their memory reclaimed.
@@ -135,9 +138,6 @@ public:
     {
         clear();
     }
-
-    SingleLinkedList(const SingleLinkedList &) = delete;
-    SingleLinkedList & operator=(const SingleLinkedList &) = delete;
 
     /// \brief  Determine if a SingleLinkedList is empty.
     ///
@@ -190,6 +190,38 @@ public:
         return Iterator(node);
     }
 
+    /// \brief  Insert a new item into the linked list immediately following
+    ///         the specified iterator.
+    ///
+    /// \param it   An iterator pointing to an existing item in the linked list.
+    /// \param data The data to be inserted into the list.
+    ///
+    /// \return An iterator pointing to the new list item.
+    Iterator insert_after(const Iterator &it, const T &data)
+    {
+        node_t *node = it._node;
+        node_t *new_node = new node_t(data);
+
+        new_node->_next = node->_next;
+        node->_next = new_node;
+
+        return Iterator(new_node);
+    }
+
+    Iterator remove_after(const Iterator &it)
+    {
+        node_t *node = it._node;
+        node_t *rem = node->_next; // node to be removed
+
+        if (rem)
+        {
+            node->_next = rem->_next;
+            delete rem;
+        }
+
+        return Iterator(node->_next);
+    }
+
     /// \brief  Erase the linked list. Memory allocated to nodes is reclaimed.
     void clear() noexcept
     {
@@ -235,37 +267,6 @@ public:
         return Iterator(find_tail_node());
     }
 
-    /// \brief  Insert a new item into the linked list immediately following
-    ///         the specified iterator.
-    ///
-    /// \param it   An iterator pointing to an existing item in the linked list.
-    /// \param data The data to be inserted into the list.
-    ///
-    /// \return An iterator pointing to the new list item.
-    Iterator insert_after(const Iterator &it, const T &data)
-    {
-        node_t *node = it._node;
-        node_t *new_node = new node_t(data);
-
-        new_node->_next = node->_next;
-        node->_next = new_node;
-
-        return Iterator(new_node);
-    }
-
-    Iterator remove_after(const Iterator &it)
-    {
-        node_t *node = it._node;
-        node_t *rem = node->_next; // node to be removed
-
-        if (rem)
-        {
-            node->_next = rem->_next;
-            delete rem;
-        }
-
-        return Iterator(node->_next);
-    }
 private:
     /// \brief  Helper function to find the last node in the list.
     ///
