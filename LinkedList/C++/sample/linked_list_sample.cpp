@@ -11,9 +11,9 @@ void traverse_list(T &list)
     std::cout << "Traversing linked list\n";
 
     int n = 0;
-    for (auto &v : list)
+    for (auto *node = list.head(); node; node = node->next())
     {
-        std::cout << "Data = " << v << '\n';
+        std::cout << "Data = " << node->data() << '\n';
         ++n;
     }
 
@@ -43,35 +43,13 @@ void test_singly_linked_list()
     ab_list.append({63, 80});
 
 
-    // Get an iterator for the first item in the list of doubles.
-    auto it_beg = list.begin();
-
-    // Print what the iterator refers to.
-    std::cout << "Iterator has " << *it_beg << '\n';
-
     // Use an iterator to insert new elements.
-    auto it_ins = list.insert_after(it_beg, 3.14);
-    list.insert_after(it_ins, 2.71828);
-
-    // Use the before-begin iterator to insert a new element before the head node
-    list.insert_after(list.before_begin(), 1.414);
-    traverse_list(list);
-    // Also use it to remove the head node
-    list.remove_after(list.before_begin());
+    auto head_node = list.head();
+    list.insert_after(head_node, 3.14);
+    list.insert_after(head_node, 2.71828);
     traverse_list(list);
 
-    // We can use our simple iterators with the range-based for statement
-    std::cout << "From range-based for loop:\n";
-    for (auto &v : list)
-        std::cout << v << '\n';
-
-    // We can also manually traverse a list with iterators,
-    // and use the iterator as a pointer to access an item's members
-    std::cout << "Manual iteration:\n";
-    for (auto iter = ab_list.begin(); iter != ab_list.end(); ++iter)
-        std::cout << "member a: " << iter->a << ", member b: " << iter->b << '\n';
-
-    list.clear();
+    list.erase();
 
     SingleLinkedList<int>   int_list;
 
@@ -101,9 +79,9 @@ void test_singly_linked_list()
     // A faster way to append a lot of elements, using insert_after
     std::cout << "appending 10,000,000 elements using insert_after\n";
     then = std::chrono::high_resolution_clock::now();
-    auto it_tail = int_list.tail();
+    auto tail_node = int_list.tail();
     for (int i=0; i < 10000000; i++)
-        it_tail = int_list.insert_after(it_tail, i);
+        tail_node = int_list.insert_after(tail_node, i);
     now = std::chrono::high_resolution_clock::now();
 
     std::cout << "appending via insert_after took "
@@ -112,7 +90,7 @@ void test_singly_linked_list()
 
     // erase all items in the list.
     then = std::chrono::high_resolution_clock::now();
-    int_list.clear();
+    int_list.erase();
     now = std::chrono::high_resolution_clock::now();
 
     std::cout << "destroying 20,000,500 elements took "
