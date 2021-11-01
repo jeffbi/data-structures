@@ -11,7 +11,6 @@ template<typename T>
 class SingleLinkedList
 {
 public:
-
     /// \brief  The linked list node structure.
     ///
     /// This class is the core of the linked list, holding the list element's
@@ -24,7 +23,7 @@ public:
         node_t *_next{nullptr};
 
     public:
-        node_t(const T &data)
+        explicit node_t(const T &data)
           : _data{data}
         {}
 
