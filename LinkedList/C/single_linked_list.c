@@ -150,7 +150,6 @@ sll_node *sll_prepend_data(sll_node **head, int data)
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         node to be removed may be he head node, in which case we would need
 ///         to make the next node the new head node.
-/// \remark Memory allocated to the removed node is not freed.
 void sll_remove_node(sll_node **head, sll_node *node)
 {
     if (*head == NULL)
@@ -159,8 +158,8 @@ void sll_remove_node(sll_node **head, sll_node *node)
     // Are we removing the head?
     if (node == *head)
     {
-        *head = (*head)->next;
-        node->next = NULL;
+        *head = node->next;
+        free(node);
     }
     else
     {
@@ -173,7 +172,7 @@ void sll_remove_node(sll_node **head, sll_node *node)
             {
                 // Unlink the node from the linked list
                 previous->next = node->next;
-                node->next = NULL;
+                free(node);
                 return;
             }
 
