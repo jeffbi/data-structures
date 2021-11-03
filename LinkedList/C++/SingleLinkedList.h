@@ -6,6 +6,8 @@
 #ifndef INC_SINGLE_LINKED_LIST
 #define INC_SINGLE_LINKED_LIST
 
+#include <stdexcept>
+
 /// \brief  An implementation of a singly-linked list.
 template<typename T>
 class SingleLinkedList
@@ -45,7 +47,6 @@ public:
         friend SingleLinkedList;
     };
 
-public:
     /// \brief  Default-construct an empty SingleLinkedList.
     SingleLinkedList() noexcept = default;
 
@@ -90,13 +91,34 @@ public:
     /// \return A pointer to the to the prepended node.
     node_t *prepend(const T &data)
     {
-        node_t *node = new node_t{data};
+        node_t *new_node = new node_t{data};
 
-        if (!is_empty())
-            node->_next = _head_node;
-        _head_node = node;
+        new_node->_next = _head_node;
+        _head_node = new_node;
 
-        return node;
+        return new_node;
+    }
+
+    /// \brief  Insert a new item into the linked list immediately following
+    ///         the specified node.
+    ///
+    /// \param data The data to be inserted into the list.
+    /// \param node A pointer to an existing node in the linked list.
+    ///
+    /// \return A pointer to the new item's node.
+    node_t *insert_after(const T &data, node_t *node)
+    {
+        if (!is_empty() && node != nullptr)
+        {
+            node_t *new_node = new node_t{data};
+
+            new_node->_next = node->_next;
+            node->_next = new_node;
+
+            return new_node;
+        }
+
+        throw std::invalid_argument("SingleLinkedList::insert_after");
     }
 
     /// \brief  Append a new item to the end of the linked list.
@@ -111,25 +133,47 @@ public:
     node_t *append(const T &data)
     {
         return is_empty() ? prepend(data)
-                          : insert_after(find_tail_node(), data);
+                          : insert_after(data, find_tail_node());
     }
 
-    /// \brief  Insert a new item into the linked list immediately following
-    ///         the specified node.
+    /// \brief  Remove the specified node from the linked list.
     ///
-    /// \param node A pointer to an existing node in the linked list.
-    /// \param data The data to be inserted into the list.
+    /// \param node A pointer to the node to be removed.
+    /// \return A pointer to the node following the removed node.
     ///
-    /// \return A pointer to the new item's node.
-    node_t *insert_after(node_t *node, const T &data)
+    /// \remark This function must traverse the linked list to find the node
+    ///         previous to the specified node in order to keep the links
+    ///         coherent.
+    node_t *remove(node_t *node)
     {
-        node_t *new_node = new node_t{data};
+        if (!is_empty() && node != nullptr)
+        {
+            if (node == _head_node)
+            {
+                _head_node = node->_next;
+                delete node;
+                return _head_node->_next;
+            }
+            else
+            {
+                node_t *previous = _head_node;
 
-        new_node->_next = node->_next;
-        return node->_next = new_node;
+                while (previous != nullptr)
+                {
+                    if (previous->_next == node)
+                    {
+                        previous->_next = node->_next;
+                        delete node;
+                        return previous->_next;
+                    }
+                }
+            }
+        }
+
+        throw std::invalid_argument("SingleLinkedList::remove");
     }
 
-    /// \brief  Remove the item from the linked list immediately following
+    /// \brief  Remove from the linked list the item immediately following
     ///         the specified node.
     ///
     /// \param node A pointer to an existing node in the linked list.
@@ -137,16 +181,20 @@ public:
     /// \return A pointer to the list node following the removed node.
     node_t *remove_after(node_t *node)
     {
-        if (node->_next != nullptr)
+        if (!is_empty() && node != nullptr)
         {
-            node_t *next_node = node->_next;
+            if (node->_next != nullptr)
+            {
+                node_t *next_node = node->_next;
+                node->_next = next_node->_next;
 
-            node->_next = next_node->_next;
+                delete next_node;
+            }
 
-            delete next_node;
+            return node->next;
         }
 
-        return node->next;
+        throw std::invalid_argument("SingleLinkedList::remove_after");
     }
 
     /// \brief  Erase the linked list. Memory allocated to nodes is reclaimed.
@@ -154,7 +202,7 @@ public:
     {
         node_t *current = head();
 
-        while (current)
+        while (current != nullptr)
         {
             node_t *next = current->_next;
 
@@ -163,6 +211,29 @@ public:
         }
 
         _head_node = nullptr;
+    }
+
+    /// \brief  Locate the first node containing the given value.
+    ///
+    /// \param data Reference to an object of type \c T to be searched for.
+    ///
+    /// \return A pointer to the list node containing the specified value,
+    ///         or \c nullptr if the data item was not found.
+    ///
+    /// \remark Type \c T must be comparable to another object of type \c T
+    ///         via the equality operator (operator==).
+    node_t *find(const T &data)
+    {
+        node_t *current = head();
+
+        while (current != nullptr) {
+            if (current->data() == data)
+                break;
+
+            current = current->next();
+        }
+
+        return current;
     }
 
 private:
@@ -177,7 +248,7 @@ private:
 
         node_t *current = head();
 
-        while (current->next())
+        while (current->next() != nullptr)
             current = current->next();
 
         return current;

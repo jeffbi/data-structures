@@ -45,13 +45,26 @@ void test_singly_linked_list()
 
     // Use an iterator to insert new elements.
     auto head_node = list.head();
-    list.insert_after(head_node, 3.14);
-    list.insert_after(head_node, 2.71828);
+    list.insert_after(3.14, head_node);
+    list.insert_after(2.71828, head_node);
     traverse_list(list);
 
     list.erase();
 
     SingleLinkedList<int>   int_list;
+
+    // search the list for data items;
+    int_list.append(100);
+    int_list.append(200);
+    int_list.append(42);
+    int_list.append(316);
+    int_list.append(5656);
+    auto node_42 = int_list.find(42);
+    if (node_42)
+        std::cout << "Found " << node_42->data() << " in node " << static_cast<void *>(node_42) << '\n';
+    else
+        std::cout << "Faild to find 42!\n";
+    int_list.erase();
 
     std::cout << "prepending 10,000,000 elements\n";
     auto then = std::chrono::high_resolution_clock::now();
@@ -81,7 +94,7 @@ void test_singly_linked_list()
     then = std::chrono::high_resolution_clock::now();
     auto tail_node = int_list.tail();
     for (int i=0; i < 10000000; i++)
-        tail_node = int_list.insert_after(tail_node, i);
+        tail_node = int_list.insert_after(i, tail_node);
     now = std::chrono::high_resolution_clock::now();
 
     std::cout << "appending via insert_after took "
