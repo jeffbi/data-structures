@@ -1,3 +1,9 @@
+# Please Note:
+This repository is actively undergoing fairly extensive changes including code refactoring, bug fixes, and improved documentation. I hope you'll return when I've completed the revisions.
+
+Thank you.
+
+
 # Data Structures
 This repository contains sample implementations of various data structures.
 
