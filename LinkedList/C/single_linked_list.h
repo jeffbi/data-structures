@@ -26,7 +26,8 @@ sll_node *sll_insert_node_after(sll_node *after, sll_node *node);
 sll_node *sll_insert_data_after(sll_node *after, int data);
 sll_node *sll_prepend_node(sll_node **head, sll_node *node);
 sll_node *sll_prepend_data(sll_node **head, int data);
-void sll_remove_node(sll_node **head, sll_node *node);
+sll_node *sll_remove_node_after(sll_node **head, sll_node *node);
+sll_node *sll_remove_node(sll_node **head, sll_node *node);
 void sll_erase(sll_node **head);
 
 #endif  // INC_SINGLE_LINKED_LIST_H

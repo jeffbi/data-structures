@@ -136,6 +136,30 @@ public:
                           : insert_after(data, find_tail_node());
     }
 
+    /// \brief  Remove from the linked list the item immediately following
+    ///         the specified node.
+    ///
+    /// \param node A pointer to an existing node in the linked list.
+    ///
+    /// \return A pointer to the list node following the removed node.
+    node_t *remove_after(node_t *node)
+    {
+        if (!is_empty() && node != nullptr)
+        {
+            if (node->_next != nullptr)
+            {
+                node_t *next = node->_next;
+
+                node->_next = next->_next;
+                delete next;
+            }
+
+            return node->next;
+        }
+
+        throw std::invalid_argument("SingleLinkedList::remove_after");
+    }
+
     /// \brief  Remove the specified node from the linked list.
     ///
     /// \param node A pointer to the node to be removed.
@@ -161,40 +185,12 @@ public:
                 while (previous != nullptr)
                 {
                     if (previous->_next == node)
-                    {
-                        previous->_next = node->_next;
-                        delete node;
-                        return previous->_next;
-                    }
+                        return remove_after(previous);
                 }
             }
         }
 
         throw std::invalid_argument("SingleLinkedList::remove");
-    }
-
-    /// \brief  Remove from the linked list the item immediately following
-    ///         the specified node.
-    ///
-    /// \param node A pointer to an existing node in the linked list.
-    ///
-    /// \return A pointer to the list node following the removed node.
-    node_t *remove_after(node_t *node)
-    {
-        if (!is_empty() && node != nullptr)
-        {
-            if (node->_next != nullptr)
-            {
-                node_t *next_node = node->_next;
-                node->_next = next_node->_next;
-
-                delete next_node;
-            }
-
-            return node->next;
-        }
-
-        throw std::invalid_argument("SingleLinkedList::remove_after");
     }
 
     /// \brief  Erase the linked list. Memory allocated to nodes is reclaimed.
