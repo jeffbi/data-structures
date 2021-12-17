@@ -63,12 +63,17 @@ void test_singly_linked_list()
     traverse_list(list);
 
     // Append a few AB objects to our list of AB structures.
+    std::cout << "Append AB objects\n";
+    std::cout << "  First append\n";
     ab_list.append({42, 9});
+    std::cout << "  Second append\n";
     ab_list.append({63, 80});
+    std::cout << "  Third append\n";
     ab_list.append({1960, 12});
 
 
     // Use insert_after to insert new elements.
+    std::cout << "insert_after\n";
     auto head_node = list.head();
     list.insert_after(3.14, head_node);
     list.insert_after(2.71828, head_node);

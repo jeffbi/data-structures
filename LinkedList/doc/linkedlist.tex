@@ -88,15 +88,15 @@
 \begin{document}
   \title{An Introduction to Linked Lists}
   \author{Jeff Bienstadt}
-  %\date{November 10, 2021}
+  \date{December 15, 2021}
   \maketitle
   \begin{abstract}
     This article presents the linked list data structure. It describes the layout of the linked list and the operations that can be performed with its use. Finally, it presents annotated source code for implementations in the C and \Cpp\ languages. The full source code, in both languages, including code to demonstrate the usage of linked lists in applications, is available for download from GitHub\footnote{\url{https://github.com/jeffbi/data-structures/tree/master/LinkedList/C}}\footnote{\url{https://github.com/jeffbi/data-structures/tree/master/LinkedList/C++}}.
   \end{abstract}
-  \part{Description}
+  \part{Description}\label{part:description}
   The linked list is a linear data structure that consists of a series of \emph{nodes} that contain the data and which are \emph{linked} together. The data portion of a node may contain any type of data desired. This article will use simple integer values for node data.
 
-  The first node in the list is the \emph{head} node. The last node in the list is the \emph{tail} node. A list with no head node is empty.
+  The first node in the linked list is the \emph{head} node. An implementation will generally keep a pointer or reference to the head node as a way of keeping track of the linked list itself. A linked list with no head node is empty. The last node in the linked list is the \emph{tail} node. Some implementations also keep track of the tail node, but it is not required.
 
   Nodes in a linked list are not required to be contiguous in memory, and they are unlikely to be. Because nodes are linked rather than each residing in a specific location as in an array, a linked list may ``grow'' or ``shrink'' to any size required, without the need to move any surrounding nodes. As a result inserting a new node into the list is fast and efficient. However, locating a given node is comparatively slow as the linked list does not provide for quick random access. Instead the list must be traversed node by node until either the desired node is found or until a terminating node is reached.
 
@@ -202,9 +202,9 @@
     \label{fig:singlelinkedlist-newnode}
   \end{figure}
 
-  Figures~\ref{fig:singlelinkedlist-insert-step-one} and \ref{fig:singlelinkedlist-insert-step-two} illustrate the process of inserting the new node into the list, between the second and third nodes, labeled~B and C, respectively, in figure~\ref{fig:singlelinkedlist-newnode} The list has been traversed and stopped at node B.
+  Figures~\ref{fig:singlelinkedlist-insert-step-one} and \ref{fig:singlelinkedlist-insert-step-two} illustrate the process of inserting the new node into the linked list, between the second and third nodes, labeled~B and C respectively, in figure~\ref{fig:singlelinkedlist-newnode}. The list has been traversed and stopped at node B.
 
-  Node B's \emph{next} pointer is copied into the new node's \emph{next} pointer, resulting in two nodes pointing to the same \emph{next} node, as shown in figure~\ref{fig:singlelinkedlist-insert-step-one}.
+  Node B's \emph{next} pointer is copied into the new node's \emph{next} pointer, resulting in two nodes pointing to the same \emph{next} node, as shown in figure~\ref{fig:singlelinkedlist-insert-step-one}. This coresponds to line~3 in the insertion algorithm.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -227,7 +227,7 @@
     \label{fig:singlelinkedlist-insert-step-one}
   \end{figure}
 
-  Node B's \emph{next} pointer is then set to the location of the new node. As seen in figure~\ref{fig:singlelinkedlist-insert-step-two}, the new node is fully inserted into the linked list.
+  Node B's \emph{next} pointer is then set to the location of the new node, which is line~4 in the insertion algorithm. As seen in figure~\ref{fig:singlelinkedlist-insert-step-two}, the new node is fully inserted into the linked list.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -251,16 +251,11 @@
   \end{figure}
 
   Note that the new node was set to point at the next node \emph{before} setting the current node to point to the new node. Otherwise for a brief moment the new node is the last node in the list and the tail node is no longer part of the list. Additionally, if the new node's \emph{next} pointer was left unitialized on creation then that pointer may point anywhere, not at a valid list node. These issues are important in a multi-threaded environment. By having the new node point to the next node first, these problems are avoided.
-  \subsubsection{Appending to the end of a singly-linked list}
-  Appending a new node to a linked list is simpler than inserting a node into the linked list, although the tail node must be located, which generally means traversing the linked list..
-  \begin{enumerate}
-    \item Create the new node and set its \emph{next} pointer to a null pointer or empty reference.
-    \item Locate the tail node.
-    \item Set the tail node's \emph{next} pointer to point to the new node.
-  \end{enumerate}
-  It is important to set the new node's pointer to $\phi$ before changing the original tail node's pointer, to avoid having a brief time in which the new node is not a valid tail node.
+
+  An unfortunate side effect of inserting a node after a specified node is that there is no node preceding the head node, making insertion of a node to be the new head node is problematic. Fortunately prepending a node to the front of a linked list is simple.
+
   \subsubsection{Prepending to the front of a singly-linked list}
-  Adding a new node to the front of a linked list is equally simple. It is also generally faster since it is not necessary to traverse the linked list to locate the its tail node.
+  Adding a new node to the front of a linked list requires the current head node and the new node to be prepended. By setting the new node's \emph{next} pointer to the curent head node, the new node becomes the new head node.
   \begin{enumerate}
     \item Create the new node.
     \item Set the new node's \emph{next} pointer to point to the current head node.
@@ -268,8 +263,17 @@
   \end{enumerate}
   The prepended node is now the new head node and the linked list is complete.
 
+  \subsubsection{Appending to the end of a singly-linked list}
+  Appending a new node to a linked list is simpler than inserting a node into the linked list, although the tail node must be located, which generally means either traversing the linked list or maintaining a pointer or reference to the tail node.
+  \begin{enumerate}
+    \item Create the new node and set its \emph{next} pointer to a null pointer or empty reference.
+    \item Locate the tail node. If a large number of appends are expected, keeping a reference or pointer to the tail node can speed this process.
+    \item Set the tail node's \emph{next} pointer to point to the new node.
+  \end{enumerate}
+  It is important to set the new node's next pointer to $\phi$ before changing the original tail node's pointer, to avoid having a brief time in which the new node is not a valid tail node.
+
   \subsection{Removing nodes}
-  Removing a node from a singly-linked list is similar to the insertion process. Since there is no direct access to a node's previous node it is simpler to remove the node \emph{after} a given node.
+  Removing a node from a singly-linked list is similar to the insertion process. Since there is no direct access to a node's previous node it is necessary to remove the node \emph{after} a given node.
   Figure~\ref{fig:singlelinkedlist-beforeremove} shows a singly-linked list with a node to be removed, node~C.
   \begin{figure}[H]
     \centering
@@ -345,9 +349,12 @@
     \label{fig:singlelinkedlist-removed}
   \end{figure}
 
-  Removing the head node requires special handling since there is no node preceding it.
+  Removing the head node requires special handling since there is no node preceding it. Since most implementations maintain a reference to the head node, all that is required is that the maintained reference or pointer be set to the current head node's \emph{next} node. Then the former head node's \emph{next} pointer may be set to $\phi$ to completely disassociate that node from the linked list.
+
+  The~C implementation of the singly-linked list in Part~\ref{part:implementation}, section~\ref{sect:C_implementation}, incorporates this logic into the \verb|sll_remove_node| function.
+
   \section{Doubly linked lists}
-  A doubly-linked list is very similar to a singly-linked list. The primary difference is that a node contains a pointer to the previous node as well as the next node. This allows the linked list to be traversed both forward and backward, and makes it much simpler to reach a node's predecessor. Figure~\ref{fig:doublelinkedlist} illustrates a doubly-linked list.
+  A doubly-linked list is very similar to a singly-linked list. The primary difference is that a node contains a pointer to the previous node as well as a pointer to the next node. This allows the linked list to be traversed both forward and backward, and makes it much simpler to reach a node's predecessor. Figure~\ref{fig:doublelinkedlist} illustrates a doubly-linked list.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -371,7 +378,7 @@
   \end{figure}
   % TODO: Write more about doubly-linked lists!!!
 
-%  Some implementations use pointers or references to \emph{dummy} nodes, one before the first element and another following the last element. The dummy nodes are not true nodes in the linked list as they contain no data---each is simply a placeholder. A doubly-linked list using dummy nodes might look like figure~\ref{fig:doublelinkedlist-dummy}.
+%  As with a singly-linked list, some implementations use pointers or references to \emph{dummy} nodes, one at either end of the linked list. The dummy nodes are not true nodes in the linked list as they contain no data---each is simply a placeholder. A doubly-linked list using dummy nodes might look like figure~\ref{fig:doublelinkedlist-dummy}.
 %  \begin{figure}[h]
 %    \centering
 %    \begin{tikzpicture}[
@@ -432,7 +439,7 @@
     \label{fig:doublelinkedlist-newnode}
   \end{figure}
 
-  Figures~\ref{fig:doublelinkedlist-insert-step-two} and \ref{fig:doublelinkedlist-insert-step-four} demonstrate the process of inserting the new node between nodes~B and C. Since nodes~B and C point to each other, forward and backward, the process is the same whether inserting after node~B or before node~C.
+  Figures~\ref{fig:doublelinkedlist-insert-step-two} and \ref{fig:doublelinkedlist-insert-step-three} demonstrate the process of inserting the new node between nodes~B and C. Since nodes~B and C point to each other, forward and backward, the process is the same whether inserting after node~B or before node~C.
 
   The new node's previous pointer is set to point to node~B, and its next pointer is set to point to node~C, as shown in figure~\ref{fig:doublelinkedlist-insert-step-two}. It makes no difference whether the previous pointer is set first or the next pointer, but the two steps together should be done before modifying the pointers of existing nodes in the linked list.
   \begin{figure}[H]
@@ -462,7 +469,7 @@
     \label{fig:doublelinkedlist-insert-step-two}
   \end{figure}
 
-  Once the new node's pointer have been set, node~B's \emph{next} pointer and node~C's \emph{previous} pointer are both set to the new node, as shown in figure~\ref{fig:doublelinkedlist-insert-step-two}, completing the insertion.
+  Once the new node's pointer have been set, node~B's \emph{next} pointer and node~C's \emph{previous} pointer are both set to the new node, as shown in figure~\ref{fig:doublelinkedlist-insert-step-three}, completing the insertion.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -487,20 +494,21 @@
       \path[*->] ($(D.three)+(-0.05,0.1)$) edge [bend left] ($(C)+(-0.15,0.3)$);
     \end{tikzpicture}
     \caption{New node inserted, both previous and next nodes point to it.}
-    \label{fig:doublelinkedlist-insert-step-four}
+    \label{fig:doublelinkedlist-insert-step-three}
   \end{figure}
 
   \subsubsection{Appending to the end of a doubly-linked list}
-  Appending a node to the end of a doubly-linked list
+  Appending a node to the end of a doubly-linked list is similar to appending to a singly-linked list, with the exception of handling an additional node pointer.
   \begin{itemize}
     \item Create the new node and set its \emph{next} pointer to a null pointer or empty reference.
     \item Locate the tail node.
     \item Set the new node's \emph{previous} pointer to point to the current tail node.
     \item Set the current tail node's \emph{next} pointer to point to the new node.
   \end{itemize}
+  As with a singly-linked list, the tail node must be located. Some implementations maintain a pointer or reference to the tail node for this purpose.
 
   \subsubsection{Prepending to the front of a doubly-linked list}
-  Adding a new node to the beginning of a doubly-linked list
+  Adding a new node to the beginning of a doubly-linked list is again similar to doing so to a singly-linked list. As with appending, there is another node pointer to consider.
   \begin{itemize}
     \item Create the new node, setting its \emph{previous} pointer to $\phi$.
     \item Set the new node's \emph{next} pointer to point to the current head node.
@@ -538,6 +546,7 @@
     \label{fig:doublelinkedlist-before-remove}
   \end{figure}
 
+  First, node~C's \emph{previous} and \emph{next} pointers are used to locate the nodes prior to and following it. Node~B's \emph{next} pointer is set to point to node~D, and node~D's \emph{previous} pointer is set to point to node~B, as shown in figure~\ref{fig:doublelinkedlist-removing}.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -562,10 +571,11 @@
     \path[*->] ($(C.one)+(0.175,0.15)$) edge [bend left] ($(B.three)+(0.3,-0.3)$);
     \path[*->] ($(D.one)+(0.175,0.15)$) edge [bend left] ($(B.three)+(0.3,-0.3)$);
   \end{tikzpicture}
-    \caption{Doubly-linked list, node C to be removed. Nodes \textsf{B} and \textsf{D} now point to each other.}
+    \caption{Nodes \textsf{B} and \textsf{D} now point to each other.}
     \label{fig:doublelinkedlist-removing}
   \end{figure}
 
+  Once nodes B and C point to each other, node~C has effectively been removed. To ensure the removed node no longer refers to any node still in the linked list, its \emph{previous} and \emph{next} pointer are set to $\phi$, as illustrated in figure~\ref{fig:doublelinkedlist-after-remove}.
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
@@ -588,13 +598,16 @@
     \path[*->] ($(B.one)+(0.175,0.15)$) edge [bend left] ($(A.three)+(0.3,-0.3)$);
     \path[*->] ($(D.one)+(0.175,0.15)$) edge [bend left] ($(B.three)+(0.3,-0.3)$);
   \end{tikzpicture}
-    \caption{Doubly-linked list, node C to be removed.}
+    \caption{Node C fully removed.}
     \label{fig:doublelinkedlist-after-remove}
   \end{figure}
 
-  \part{Implementation}
+  If the node to be removed is the head or tail node, the implementation must take care to not attempt to have a non-existant node point somewhere.
+
+  \part{Implementation}\label{part:implementation}
   This part provides sample implementations of linked lists, in both the C and \Cpp\ languages. The C program implements a singly-linked list, and is simple and straightforward, while the \Cpp\ implementation utilizes an Object Oriented Programming approach to create a doubly-linked list.
   \section{C Implementation}
+  \label{sect:C_implementation}
   Here we present an implementation of a singly-linked list in the C language. This implementation uses simple integers for the type of data stored in a node. The code can be easily modified to work with any data type.
 
   The implementation consists of two C source files, \verb|single_linked_list.h| and \verb|single_linked_list.c|.
@@ -656,17 +669,15 @@ sll_node *sll_find_data(sll_node *start, int data) {
   Next, the \verb|find_tail_node| function is defined. This function traverses the linked list starting at a specified node until the tail node is found. The starting node might usually be the head node, but that is not required.
   \begin{lstc}
 sll_node *sll_find_tail_node(sll_node *start) {
-  if (start == NULL)
-    return NULL;
-
-  while (start->next != NULL)
-    start = start->next;
+  if (start != NULL)
+    while (start->next != NULL)
+      start = start->next;
 
   return start;
 }\end{lstc}
-  On line 22, if the starting node is \verb|NULL|, the function won't be able to locate the tail node so \verb|NULL| is returned on line 23.
+  Line 22, tests the \verb|start| node to ensure that it is not \verb|NULL|. If the \verb|start| node is \verb|NULL|, control falls to the \verb|return| statment on line~26.
 
-  Lines 25 and~26 use the \verb|start| parameter to traverse the list, updating \verb|start| to point to the next node in the linked list until the node's \verb|next| pointer is \verb|NULL|, indicating that the node is the tail node. Line 28 returns a pointer to that node.
+  Lines 23 and~24 use the \verb|start| parameter to traverse the list, updating \verb|start| to point to the next node in the linked list until the node's \verb|next| pointer is \verb|NULL|, indicating that the node is the tail node. Line~26 returns a pointer to that node.
 
   The \verb|sll_append_node| function appends a new node to the end of the list.
   \begin{lstc}
@@ -678,9 +689,9 @@ sll_node *sll_append_node(sll_node **head, sll_node *node) {
 
   return node;
 }\end{lstc}
-  The function parameter list on line 30 takes \verb|head| as a pointer-to-pointer to an \verb|ssl_node| structure. This allows the pointer to the head node to be modified if necessary. In this case, if the linked list is empty as indicated by the head pointer being \verb|NULL| (line 31) then the new node becomes the new head node (line 32). This pattern is used by many of the functions in the code.
+  The function parameter list on line 28 takes \verb|head| as a pointer-to-pointer to an \verb|ssl_node| structure. This allows the pointer to the head node to be modified if necessary. In this case, if the linked list is empty as indicated by the head pointer being \verb|NULL| (line~29) then the new node becomes the new head node on line~31.
 
-  If the linked list is not empty, then line 34 locates the tail node and sets its \verb|next| pointer to point to the new node. A pointer to the new node is returned.
+  If the linked list is not empty, then line 32 locates the tail node and sets its \verb|next| pointer to point to the new node. A pointer to the new node is returned.
 
   The \verb|sll_append_data| function is very simple.
   \begin{lstc}
@@ -697,7 +708,7 @@ sll_node *sll_insert_node_after(sll_node *after, sll_node *node) {
 
   return node;
 }\end{lstc}
-  On line 42 the new node's \verb|next| pointer is set to \verb|after|'s \verb|next| pointer. There are now two nodes pointing to the same following node. Then, on line 43, the \verb|next| pointer of the \verb|after| node is modified to point to the new node, completing the link. These are the steps illustrated in figures~\ref{fig:singlelinkedlist-insert-step-one} and~\ref{fig:singlelinkedlist-insert-step-two} in Part One.
+  On line 40 the new node's \verb|next| pointer is set to \verb|after|'s \verb|next| pointer. There are now two nodes pointing to the same following node. Then, on line~41, the \verb|next| pointer of the \verb|after| node is modified to point to the new node, completing the link. These are the steps illustrated in figures~\ref{fig:singlelinkedlist-insert-step-one} and~\ref{fig:singlelinkedlist-insert-step-two} in Part~\ref{part:description}.
 
   The \verb|sll_insert_data_after| function is similar to the \verb|sll_append_data| function. It calls \verb|sll_create_node| to create a new node, then passes that node pointer on to \verb|sll_insert_node_after| and returns a pointer to the new node.
   \begin{lstc}
@@ -713,9 +724,9 @@ sll_node *prepend_node(sll_node **head, sll_node *node) {
 
   return node;
 }\end{lstc}
-  Line 51 sets the new node's \verb|next| pointer to point to the current head node. Note the additional level of indirection. \verb|head| is a pointer-to-pointer, so \verb|node->next| is set to what that pointer points to, which is the actual pointer to the head node.
+  Line 49 sets the new node's \verb|next| pointer to point to the current head node.
 
-  Line 52 directly changes the head node by setting \verb|*head| to the new node pointer. Again, note the additional level of indirection. \verb|node| is now the new head node of the linked list.
+  Line 50 directly changes the head node by setting \verb|*head| to the new node pointer. Again, note the additional level of indirection. \verb|node| is now the new head node of the linked list.
 
   The \verb|sll_prepend_data| function calls \verb|sll_create_node| and \verb|sll_prepend_node| to create a new node with the specified data and make that node the new head of the linked list.
   \begin{lstc}
@@ -723,70 +734,57 @@ sll_node *sll_prepend_data(sll_node **head, int data) {
   return sll_prepend_node(head, sll_create_node(data));
 }\end{lstc}
 
-  The implementation provides two functions for removing a linked list node. The first, \verb|sll_remove_after| removes the node \emph{following} the given node.
+  The implementation provides two functions for removing a linked list node. The first, \verb|sll_remove_node_after| removes the node \emph{following} the given node.
   \begin{lstc}
-sll_node *sll_remove_after(sll_node **head, sll_node *node) {
-  if (!(*head == NULL || node == NULL)) {
-    if (node->next != NULL) {
-      sll_node *next = node->next;
+sll_node *sll_remove_node_after(sll_node **head, sll_node *node) {
+  if (node->next != NULL) {
+    sll_node *next = node->next;
 
-      node->next = next->next;
-      free(next);
-    }
-
-    return node->next;
+    node->next = next->next;
+    free(next);
   }
 
-  return NULL;
+  return node->next;
 }\end{lstc}
-  Line~60 ensures the linked list is not empty and that the passed-in node pointer not NULL, and if either condition is true then control falls to line~71 which returns a NULL pointer.
-
-  Line~61 determines whether the passed-in node has a node following it. If so, that node will be removed and line~62 saves a pointer to that node. Line~64 sets the passed-in node's next pointer to point to the node following the node to be removed. This unlinks the desired node from the linked list. That node's next pointer still points to the following node, but it is not necessary to reset that pointer since line~66 disposes of the removed node with the C~Library's \verb|free| function.
+  Line~58 determines whether the passed-in node has a node following it. If so, that node will be removed and line~59 saves a pointer to that node. Line~61 sets the passed-in node's next pointer to point to the node following the node to be removed. This unlinks the desired node from the linked list. That node's next pointer still points to the following node, but it is not necessary to reset that pointer since line~66 disposes of the removed node with the C~Library's \verb|free| function.
 
   Note that only the memory for each node is deallocated. If the \verb|data| portion of the node is a pointer or contains pointers to allocated memory, it is the user's responsibility to perform any required memory management before removing the node.
 
-  Whether there was a next node to remove or not, on line~68 the function returns a pointer to the node now following the passed-in node, which might be \verb|NULL|.
+  Whether there was a next node to remove or not, on line~65 the function returns a pointer to the node now following the passed-in node, which might be \verb|NULL|.
 
   The \verb|sll_remove_node| function removes a node from a linked list, and is the longest of this implementation. If the node to be removed is the head node, the next node in the list must be made the new head node. Otherwise the list must be traversed to locate the node that appears before the one to be removed.
   \begin{lstc}
 sll_node *sll_remove_node(sll_node **head, sll_node *node) {
-  if (!(*head == NULL || node == NULL)) {
-    if (node == *head) {
-        *head = node->next;
-        free(node);
-        return *head;
-    }
-    else {
-      sll_node *previous = *head;
+  if (node == *head) {
+    *head = node->next;
+    free(node);
+    return *head;
+  }
+  else {
+    sll_node *previous = *head;
 
-      while (previous != NULL) {
-        if (previous->next == node)
-          return sll_remove_after(head, node);
+    while (previous != NULL) {
+      if (previous->next == node)
+        return sll_remove_node_after(head, node);
 
-        previous = previous->next;
-      }
+      previous = previous->next;
     }
   }
 
   return NULL;
 }\end{lstc}
-  Line~74 ensures the linked list is not empty and that the passed-in node pointer is not NULL. Line~75 determines whether the node to be removed is the head node and if so line~76 resets the current head node to the next node, unlinking the node from the linked list. The removed node is then disposed of and the new head node is returned.
+  Line~68 determines whether the node to be removed is the head node and if so line~69 resets the current head node to the next node, unlinking the node from the linked list. The removed node is then disposed of with the standard C library function \verb|free| and the new head node is returned.
 
-  If the node to be removed is not the head node, the list must be traversed from the beginning to locate the node previous to the one being removed. A new variable is created to traverse the list on line~81, and is initialized to point to the head node. A \verb|while| loop is employed on line~83 to traverse the list until the \verb|previous| variable becomes NULL, in which case the node was not found.
+  If the node to be removed is not the head node, the list must be traversed from the beginning to locate the node previous to the one being removed. A new variable is created to traverse the linked list on line~74, and is initialized to point to the head node. A \verb|while| loop is employed on line~83 to traverse the list until the \verb|previous| variable becomes NULL, in which case the node was not found.
 
-  Inside the \verb|while| loop, on line~84, if \verb|previous|'s \verb|next| pointer points to the node to be removed then \verb|node|'s previous node has been found. That node is passed to the \verb|sll_remove_after| function to perform the actual removal, and the result of that function is returned.
+  Inside the \verb|while| loop, on line~77, if \verb|previous|'s \verb|next| pointer points to the node to be removed then \verb|node|'s previous node has been found. That node is passed to the \verb|sll_remove_node_after| function to perform the actual removal, and the result of that function is returned.
 
   The final function in the C implementation is \verb|sll_erase|, which traverses the linked list, freeing the memory allocated for each node.
   \begin{lstc}
-void sll_erase(sll_node **head)
-{
-  if (*head == NULL)
-    return;
-
+void sll_erase(sll_node **head) {
   sll_node *current = *head;
 
-  while (current != NULL)
-  {
+  while (current != NULL) {
     sll_node *next = current->next;
 
     free(current);
@@ -795,19 +793,20 @@ void sll_erase(sll_node **head)
 
   *head = NULL;
 }\end{lstc}
-  The function is passed a pointer-to-pointer to the head node because the head node will ultimately be set to \verb|NULL| to indicate that the linked list is empty. On line~96 the function tests \verb|*head| to determine if the linked list is already empty and if so returns with no further action.
+  The function is passed a pointer-to-pointer to the head node because the head node will ultimately be set to \verb|NULL| to indicate that the linked list is empty.
 
-  On line~99 a new node variable is created to point to the current node as the linked list is being traversed. Line~101 begins the \verb|while| loop that traverses the linked list. The \verb|current| node's \verb|next| pointer is stored in a temporary variable and the memory allocated to the \verb|current| node is deallocated by calling the C library's \verb|free| function, on line~105. \verb|current| is set to point to the next node in the linked list, the value stored in the temporary variable, and the loop continues until there are no more nodes in the list.
+  On line~87 a new node variable is created to point to the current node as the linked list is being traversed. Line~89 begins the \verb|while| loop that traverses the linked list. The \verb|current| node's \verb|next| pointer is stored in a temporary variable and the memory allocated to the \verb|current| node is deallocated by calling the C library's \verb|free| function, on line~92. \verb|current| is set to point to the next node in the linked list, the value stored in the temporary variable, and the loop continues until there are no more nodes in the list.
 
   Finally, the head node is set to NULL, indicating that the linked list is now empty.
 
-  This completes the implementation of a singly-linked list in C, produced in under~130 lines of code.
+  This completes the implementation of a singly-linked list in C, produced in under~100 lines of C code.
 
   Implementing a doubly-linked list in C is similar to a singly-linked list. The main difference in a doubly-linked list is that the node structure contains an additional pointer to point to the previous node, making it possible to traverse the linked list in both directions.
 
   A complete implementation of a doubly-linked list in C is available for download from the git repository.
 
   \section{\texorpdfstring{\Cpp}{C++} Implementation}
+  \label{sect:Cpp_implementation}
   This section presents an implementation of a doubly-linked list in the \Cpp\ language. The implementation utilizes Object Oriented Programming principals, particularly encapsulation. Templates are also used so a linked list can use any copyable data type.
 
   This is a header-only implementation consisting only of \verb|DoubleLinkedList.h|. The user need only include the header file. No additional library or object code is required.
@@ -838,7 +837,7 @@ public:
     node_t & operator=(const node_t &) = delete;\end{lstcpp}
   Line~3 begins the definition of the \verb|node_t| class which defines the linked list node. The \verb|node_t| class defines three private data members on lines 6, 7 and 8. The \verb|_data| member is of type \verb|T|, the declared template type, and holds the node's copy of the data stored in the linked list. The \verb|_next| and \verb|_prev| members, of type \verb|node_t *|, are pointers to the next and previous nodes, respectively, in the linked list. Lines 11--13 define the \verb|node_t| type's \verb|explicit| constructor, which takes a reference to an object of type \verb|T|. A node is not copyable and it is not assignable, as specified by lines~15 and 16.
 
-  The \verb|node_t| class also contains three functions, \verb|data()|, \verb|next()|, and \verb|prev()| which provide access to the content of the linked list item and to the node's \emph{next} and \emph{previous} pointers.
+  The \verb|node_t| class contains three public functions, \verb|data()|, \verb|next()|, and \verb|prev()| which provide access to the content of the linked list item data and read access to the node's \emph{next} and \emph{previous} pointers. The class also provides two private functions, \verb|next(const node_t *node)| and \verb|prev(const node_t *prev)|. These functions are private because they are meant to be called only by the \verb|DoubleLinkedList| class to set the values of the node's \emph{next} and \emph{prev} pointers.
   \begin{lstcpp}
     T &data() noexcept {
         return _data;
@@ -852,9 +851,18 @@ public:
         return _prev;
     }
 
+  private:
+    void next(node_t *node) {
+      _next = node;
+    }
+
+    void prev(node_t *node) {
+      _prev = node;
+    }
+
     friend DoubleLinkedList;
   };\end{lstcpp}
-  Finally, on line~29 the \verb|DouibleLinkedList| class is declared to be a \verb|friend| of the \verb|node_t| class. This allows \verb|DoubleLinkedList| direct access to the node's private data members.
+  Finally, on line~38 the \verb|DoubleLinkedList| class is declared to be a \verb|friend| of the \verb|node_t| class. This allows \verb|DoubleLinkedList| access to the node's private functions and data members.
 
   That is the entire definition of the nested \verb|node_t| class. The definition of the \verb|DoubleLinkedList| class continues with the definition of three private data members.
   \begin{lstcpp}
@@ -875,9 +883,9 @@ public:
   ~DoubleLinkedList() {
     erase();
   }\end{lstcpp}
-  The default constructor is not required to perform any specific initialization, so it is declared as \verb|default| on line~36 to have the compiler generate it. The class is not copyable and not assignable, so lines 38 and 39 use the \verb|delete| keyword to tell the compiler to not generate those functions.
+  The default constructor is not required to perform any specific initialization, so it is declared as \verb|default| on line~45 to have the compiler generate it. The class is not copyable and not assignable, so lines~47 and 48 use the \verb|delete| keyword to tell the compiler to not generate those functions.
 
-  The destructor, on line~41,  is implemented because it must delete all of the linked list's nodes. The \verb|erase| function, which is defined later, performs this task.
+  The destructor, on line~50, is implemented because it must delete all of the linked list's nodes. The \verb|erase| function, which is defined later, performs this task.
 
   Following the constructors and destructor are the operational functions of \verb|DoubleLinkedList|, beginning with the \verb|head|, \verb|tail|, \verb|size|, and \verb|is_empty| functions.
 
@@ -888,43 +896,44 @@ public:
   }
 
   node_t *tail() const noexcept {
-    return find_tail_node();
+    return _tail_node;
   }
 
   size_t size() const noexcept {
-      return _count;
+    return _count;
   }
 
   bool is_empty() const noexcept {
-    return _head_node == nullptr;
+    return head() == nullptr;
   }\end{lstcpp}
 %  \end{minipage}
-  The \verb|head| function simply returns the \verb|_head_node| member. On line~48 the \verb|tail| function returns the \verb|_tail_node| data member. The \verb|size| function returns the \verb|_count| member and the \verb|is_empty| function returns a \verb|bool| indicating whether the \verb|_head_node| is equal to \verb|nullptr|.
+  The \verb|head| function simply returns the \verb|_head_node| member. On line~57 the \verb|tail| function returns the \verb|_tail_node| data member. The \verb|size| function returns the \verb|_count| member and the \verb|is_empty| function returns a \verb|bool| indicating whether the \verb|_head_node| is equal to \verb|nullptr|.
 
   Next are the functions that add and remove items from the linked list.
   The first is the \verb|prepend| function, which adds an item to the front of the linked list, before the current head node. The added item becomes the new head node.
   \begin{lstcpp}
   node_t *prepend(const T &data) {
-    node_t *new_node = new node_t{data};
+    node_t *new_node{new node_t(data)};
 
-    new_node->_next = head();
+    new_node->next(head());
     if (is_empty())
         _tail_node = new_node;
     else
-        head()->_prev = new_node;
+        head()->prev(new_node);
     _head_node = new_node;
 
     ++_count;
+
     return new_node;
   }\end{lstcpp}
-  The \verb|prepend| function takes a \verb|const| reference to an object of type \verb|T|, which is the type given to the class' template parameter. On line~60 a new node is allocated and constructed using the \verb|new| operator. The new node's \verb|_next| pointer is then set to point to the current head node, which may or may not be \verb|nullptr|. If the linked list is empty, line~65 sets the \verb|_tail| member to the new node since the new node will be the only node in the list. Otherwise there is a head node and its \verb|_prev| node is set to the new node on line~67. In either case, line~68 sets the current head node to be the new node. The count is incremented and the pointer to the new node is returned.
+  The \verb|prepend| function takes a \verb|const| reference to an object of type \verb|T|, which is the type given to the class' template parameter. On line~69 a new node is allocated and constructed using the \verb|new| operator. The new node's \emph{next} pointer is then set to point to the current head node, which may or may not be \verb|nullptr|. If the linked list is empty, line~73 sets the \verb|_tail_node| member to the new node since the new node will be the only node in the list. Otherwise there is a head node and its \emph{prev} node is set to the new node on line~75. In either case, line~76 sets the current head node to be the new node. The count is incremented and the pointer to the new node is returned.
 
-  Note that this function directly accesses the node's private \verb|_next| data member. This is possible because the \verb|node_t| class declared \verb|DoubleLinkedList| to be a friend.
+  Note that this function invokes the node's private \verb|next(node_t *node)| and \verb|prev(node_t *node)| member functions. This is possible because the \verb|node_t| class declared \verb|DoubleLinkedList| to be a \verb|friend|.
 
   The next function to be defined is \verb|insert_after|, which inserts a new item into the linked list immediately following a given node.
   \begin{lstcpp}
   node_t *insert_after(const T &data, node_t *node) {
-    node_t *new_node = new node_t{data};
+    node_t *new_node{new node_t(data)};
 
     new_node->_next = node->_next;
     new_node->_prev = node;
@@ -935,95 +944,89 @@ public:
       new_node->_next->_prev = new_node;
 
     ++_count;
+
     return new_node;
   }\end{lstcpp}
   \verb|insert_after| takes two parameters, a \verb|const| reference to the data to be inserted and a pointer to a node after which the new data will be inserted.
 
-  On line~73 a new node is allocated and constructed. Lines 75--77 stitch the nodes together into the linked list by setting the new node's \verb|_next| pointer to the passed-in node's \verb|_next| pointer, setting the new node's \verb|_prev| pointer to the passed in node, then finally setting the passed-in node's \verb|_next| pointer to point to the new node, completing the insertion. These are the steps illustrated in figures {SET UP FIGURES FOR INSERTING INTO DOUBLY LINKED LIST!}. If the new node has no next pointer then it is the new tail tail node as well, and line~79 sets the linked list's tail node to be the new node. The node count is incremented and a pointer to the new node is returned.
+  On line~83 a new node is allocated and constructed. Lines 85--87 stitch the nodes together into the linked list by setting the new node's \verb|_next| pointer to the passed-in node's \verb|_next| pointer, setting the new node's \verb|_prev| pointer to the passed in node, then finally setting the passed-in node's \verb|_next| pointer to point to the new node, completing the insertion. These are the steps illustrated in figures~\ref{fig:doublelinkedlist-insert-step-two} and \ref{fig:doublelinkedlist-insert-step-three} in Part~\ref{part:description}. If the new node has no next pointer then it is the new tail node as well, and line~89 sets the linked list's tail node to be the new node. Otherwise the new node is being inserted not only after the specified node, but also before the following node, so the following node's \emph{prev} pointer is set to the new node on line~91. The node count is incremented and a pointer to the new node is returned.
 
-  The \verb|append| function adds a new item to the back of the linked list, following the tail node.
+  A doubly-linked list provides the ability to easily insert a new element before a given node, something that is more involved with a singly-linked list.
+  \begin{lstcpp}
+  node_t *insert_before(const T &data, node_t *node) {
+    return node == head() ? prepend(data)
+                          : insert_after(data, node->prev());
+  }\end{lstcpp}
+  The \verb|insert_before| function tests whether the specified node is the head node. If true, the new node is prepended to the front of the linked list and becomes the new head node. Otherwise, there is a node preceding the specified node and \verb|insert_after| is called with that preceding node.
+
+  The \verb|append| function adds a new item to the end of the linked list, following the tail node.
   \begin{lstcpp}
   node_t *append(const T &data) {
     return is_empty() ? prepend(data)
-                      : insert_after(data, find_tail_node());
+                      : insert_after(data, tail());
   }\end{lstcpp}
   Again, the \verb|append| function takes a \verb|const| reference to an object of type \verb|T|. If the linked list is empty then the data object is passed on to the \verb|prepend| function defined above. Otherwise the data is given to the \verb|insert_after| function to be inserted after the tail node.
 
-  The implementation provides two functions for removing nodes from the linked list. The \verb|remove_after| function takes a pointer to a node and removes the node immediately following.
-  \begin{lstcpp}
-  node_t *remove_after(node_t *node) {
-    if (!is_empty() && node != nullptr) {
-      if (node->_next != nullptr) {
-        node_t *next = node->_next;
-
-        node->_next = next->_next;
-        delete next;
-      }
-
-      return node->next;
-    }
-
-    throw std::invalid_argument("SingleLinkedList::remove_after");
-  }\end{lstcpp}
-  As in \verb|insert_after|, the function ensures that the linked list is not empty and that the passed-in node is not \verb|nullptr|, otherwise control is transferred to line~85 where the \verb|std::invalid_argument| exception is thrown.
-
-  Line~75 determines whether the passed-in node has a node following it. If so, that node will be removed and line~76 saves a pointer to that node. Line~78 sets the passed-in node's next pointer to point to the node following the node to be removed. This unlinks the desired node from the linked list. That node's next pointer still points to the following node, but it is not necessary to reset that pointer since line~79 disposes of the removed node with the \verb|delete| operator.
-
-  Note that only the memory for each node is deallocated. If the data portion of the node is a pointer or contains pointers to allocated memory, it is the user’s responsibility to perform any required memory management before removing the node.
-
-  Whether there was a next node to remove or not, on line~82 the function
-  returns a pointer to the node now following the passed-in node, which might be
-  \verb|nullptr|.
-
-  Removing a given node from a singly-linked list is easier on users since they do not have to be responsible for acquiring the previous node. However it is potentially quite slow, as there is no efficient way to locate the node's previous node---which is needed to keep the links intact---so the linked list must be traversed from the start. The \verb|remove| function does this.
+  A doubly-linked list provides for a relatively simple mechanism for removing a node directly, eliminating the need for a \verb|remove_after| function. The \verb|remove| function takes as a parameter the node to be removed, and returns a pointer to the following node if any.
   \begin{lstcpp}
   node_t *remove(node_t *node) {
-    if (!is_empty() && node != nullptr) {
-      if (node == _head_node) {
-        _head_node = node->_next;
-        delete node;
-        return _head_node->_next;
+    node_t *next_node{node->next()};
+
+    if (node == head()) {
+      if (next_node == nullptr) {
+        _head_node = _tail_node = nullptr;
       }
       else {
-        node_t *previous = _head_node;
-
-        while (previous != nullptr) {
-          if (previous->_next == node)
-            return remove_after(previous);
-        }
+        next_node->prev(nullptr);
+        _head_node = next_node;
       }
     }
+    else if (node == tail()) {
+      node->prev()->next(nullptr);
+      _tail_node = node->prev();
+    }
+    else {
+      node->prev()->next(next_node);
+      next_node->prev(node->prev());
+    }
 
-    throw std::invalid_argument("SingleLinkedList::remove");
+    delete node;
+    --_count;
+
+    return next_node;
   }\end{lstcpp}
-  Again, if the linked list is empty or if the passed-in node is \verb|nullptr|, the \verb|std::invalid_argument| exception is thrown. Line~89 determines whether the node to be removed is the head node and if so line~90 resets the current head node to the next node, unlinking the head node from the linked list. The removed node is then disposed of and the new head node is returned.
 
-  If the node to be removed is not the head node, the list must be traversed from the beginning to locate the node previous to the one being removed. A new variable, \verb|previous|, is created to traverse the list on line~95, and is initialized to point to the head node. A \verb|while| loop is used on line~97 to traverse the list until the \verb|previous| variable becomes \verb|nullptr|, in which case no previous node was found.
+  On line~106 a pointer to the specified node's \emph{next} node is stored.
 
-  Inside the \verb|while| loop, on line~98, if \verb|previous|'s \verb|next| pointer points to the node to be removed then \verb|node|'s previous node has been located.That node is passed, on line~99, to the \verb|remove_after| function which performs the removal and modifies the links. The function returns the value returned by \verb|remove_after|.
+  Line~108 determines if the node to be removed is the head node. If so, then if the head node is the only node in the linked list (line~109) then the head and tail nodes are set to \verb|nullptr| making the linked list empty. Otherwise, there is a next node and that node's \emph{prev} pointer is set to \verb|nullptr|, making it the new head node.
 
-  If the node was not found in the \verb|while| loop, control falls to line~104 and the exception is thrown.
+  If the node to be removed is not the head node but is instead the tail node (line~117), then the node prior to the specified node is made the new tail node.
+
+  If the node to be removed is neither the head nor tail node (the \verb|else| on line~121), the node is extricated from the linked list by adjusting the \emph{next} pointer of the previous node and the \emph{next} pointer on the next node.
+
+  Finally, the memory for the node to be removed is reclaimed, the node count is decremented, and the following node is returned. That node might be \verb|nullptr|.
 
   Next is the \verb|erase| function, which was used in the destructor to remove all nodes in the linked list. It is a public member function so it is available for users of the class as well.
   \begin{lstcpp}
   void erase() {
-    node_t *current = head();
+    node_t *current{head()};
 
     while (current != nullptr) {
-      node_t *next = current->_next;
+      node_t *next{current->next()};
 
       delete current;
       current = next;
     }
 
-    _head_node = nullptr;
+    _head_node = _tail_node = nullptr;
+    _count = 0;
   }\end{lstcpp}
-  The \verb|erase| function iterates all nodes in the list, beginning with the head node on line~107. The \verb|while| statement line~109 loops until the current node is \verb|nullptr|, indicating the end of the linked list. For each node in the linked list, lines 110--113 save the value of the current node's \verb|_next| pointer, free memory allocated to the node with the \verb|delete| operator, then re-assign the current node to the saved pointer to the next node. Once all nodes have been freed the head node is set to \verb|nullptr| signifying that the linked list is empty.
+  The \verb|erase| function iterates all nodes in the list, beginning with the head node on line~132. The \verb|while| statement line~134 loops until the current node is \verb|nullptr|, indicating the end of the linked list. For each node in the linked list, lines 135--138 save the value of the current node's \emph{next} pointer, free memory allocated to the node with the \verb|delete| operator, then re-assign the current node to the saved pointer to the next node. Once all nodes have been freed the head and tail nodes are set to \verb|nullptr| and the node counter is set to 0 signifying that the linked list is empty.
 
-  One more function in the public interface remains. The \verb|find| function traverses the linked list and returns the first node that contains a specified value.
+  One more function in the public interface remains. The \verb|find| function traverses the linked list and returns the first node that contains a specified data value.
   \begin{lstcpp}
   node_t *find(const T &data) {
-    node_t *current = head();
+    node_t *current{head()};
 
     while (current != nullptr) {
       if (current->data() == data)
@@ -1034,28 +1037,13 @@ public:
 
     return current;
   }\end{lstcpp}
-  The search begins at the head node on line~119. While the current node pointer in the search points to an existing node (line~121), if the current node's data member is equal to the \verb|data| parameter the loop terminates (lines 122 and 123), otherwise the current node pointer is set to the next node in the linked list. Regardless of how the loop terminated, the current node is either the node containing the data or is \verb|nullptr|, indicating that the end of the linked list was reached without finding the data. On line~128 that node value is returned.
+  The search begins at the head node on line~145. While the current node pointer in the search points to an existing node (line~147), if the current node's data member is equal to the \verb|data| parameter the loop terminates (lines~148 and 149), otherwise the current node pointer is set to the next node in the linked list. Regardless of how the loop terminated, the current node is either the node containing the data or is \verb|nullptr|, indicating that the end of the linked list was reached without finding the data. On line~154 that node value is returned.
 
-  The public interface of the \verb|SingleLinkedList| class is now complete. Only one function remains, the private helper function \verb|find_tail_node|, which is used by the \verb|tail| and \verb|append| public functions.
-  \begin{lstcpp}
-private:
-  node_t *find_tail_node() const noexcept {
-    if (is_empty())
-      return nullptr;
 
-    node_t *current = head();
+  This completes the implementation of a doubly-linked list in \Cpp, produced in~155 lines of code.
 
-    while (current->next() != nullptr)
-      current = current->next();
+  Implementing a singly-linked list in \Cpp\ is similar to a doubly-linked list. The main difference in a singly-linked list is that the node structure contains only the node's data and a pointer to the next node, so it is possible to traverse such a linked in only in the forward direction.
 
-    return current;
-  }\end{lstcpp}
-  If the linked list is empty, there is no tail node and the function returns \verb|nullptr|. On line~135 the search begins with the head node. The \verb|while| statement on line~137 compares the current node's next pointer to \verb|nullptr|, terminating the loop when that condition is true. Otherwise on line 138 \verb|current| is set to the next node in the list. When the loop terminates, the \verb|current| node pointer is returned.
-
-  This completes the implementation of a singly-linked list in \Cpp, produced in~140 lines of code.
-
-  Implementing a doubly-linked list in \Cpp\ is similar to a singly-linked list. The main difference in a doubly-linked list is that the node structure contains an additional pointer to point to the previous node, making it possible to traverse the linked list in both directions.
-
-  A complete implementation of a doubly-linked list in \Cpp\ is available for download from the git repository.
+  A complete implementation of a singly-linked list in \Cpp\ is available for download from the git repository.
 
 \end{document}

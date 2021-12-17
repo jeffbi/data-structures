@@ -7,7 +7,7 @@
 
 #include "single_linked_list.h"
 
-/// \brief  Create a new singly-linked list node populated with the specified data.
+/// \brief  Creates a new singly-linked list node populated with the specified data.
 /// \param data The data to be carried by the new node.
 /// \return A pointer to a new sll_node structure.
 ///
@@ -30,7 +30,7 @@ sll_node *sll_create_node(int data)
     return node;
 }
 
-/// \brief  Search a linked list for a node that contains the specified data.
+/// \brief  Searches a linked list for a node that contains the specified data.
 /// \param start    A pointer to the node of the linked list to begin the search.
 /// \param data     The data to find.
 /// \return On success returns a pointer to the first node containing the
@@ -47,18 +47,16 @@ sll_node *sll_find_data(sll_node *start, int data)
     return start;
 }
 
-/// \brief  Traverse the linked list until the tail node (the last node in
+/// \brief  Traverses the linked list until the tail node (the last node in
 ///         the list) is found.
 /// \param start A pointer to the node from which to begin the search.
 /// \return On success returns a pointer to the tail node of the list.
 ///         On failure returns NULL.
 sll_node *sll_find_tail_node(sll_node *start)
 {
-    if (start == NULL)
-        return NULL;
-
-    while (start->next != NULL)
-        start = start->next;
+    if (start != NULL)
+        while (start->next != NULL)
+            start = start->next;
 
     return start;
 }
@@ -145,29 +143,22 @@ sll_node *sll_prepend_data(sll_node **head, int data)
 }
 
 /// \brief  Removes the node following a given node from a linked list.
-/// \param head A pointer to pointer to the head node of the linked list.
 /// \param node A pointer to the node immediately prior to the node to be removed.
 /// \return A pointer to the node following the removed node.
 /// \remark The \p head parameter is a pointer to pointer. This is because the
 ///         node to be removed may be he head node, in which case we would need
 ///         to make the next node the new head node.
-sll_node *sll_remove_node_after(sll_node **head, sll_node *node)
+sll_node *sll_remove_node_after(sll_node *node)
 {
-    if (!(*head == NULL || node == NULL))
+    if (node->next != NULL)
     {
-        if (node->next != NULL)
-        {
-            sll_node *next = node->next;
+        sll_node *next = node->next;
 
-            node->next = next->next;
-            free(next);
-        }
-
-        return node->next;
+        node->next = next->next;
+        free(next);
     }
 
-    // List is empty or node is NULL
-    return NULL;
+    return node->next;
 }
 
 /// \brief  Removes a node from a linked list.
@@ -179,31 +170,28 @@ sll_node *sll_remove_node_after(sll_node **head, sll_node *node)
 ///         to make the next node the new head node.
 sll_node *sll_remove_node(sll_node **head, sll_node *node)
 {
-    if (!(*head == NULL || node == NULL))
+    // Are we removing the head?
+    if (node == *head)
     {
-        // Are we removing the head?
-        if (node == *head)
-        {
-            *head = node->next;
-            free(node);
-            return *head;
-        }
-        else
-        {
-            sll_node *previous = *head;
+        *head = node->next;
+        free(node);
+        return *head;
+    }
+    else
+    {
+        sll_node *previous = *head;
 
-            // Traverse the list looking for the node previous to the desired node.
-            while (previous != NULL)
-            {
-                if (previous->next == node)
-                    return sll_remove_node_after(head, node);
+        // Traverse the list looking for the node previous to the desired node.
+        while (previous != NULL)
+        {
+            if (previous->next == node)
+                return sll_remove_node_after(node);
 
-                previous = previous->next;
-            }
+            previous = previous->next;
         }
     }
 
-    // List is empty or node is NULL or no previous node was found.
+    // No previous node was found.
     return NULL;
 }
 
@@ -214,10 +202,6 @@ sll_node *sll_remove_node(sll_node **head, sll_node *node)
 /// \remark As each node is removed from the list its allocated memory is freed.
 void sll_erase(sll_node **head)
 {
-    // If the list is already empty, do nothing
-    if (head == NULL || *head == NULL)
-        return;
-
     sll_node *current = *head;
 
     while (current != NULL)
