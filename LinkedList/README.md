@@ -1,7 +1,7 @@
 # Linked List
 The Linked List is a linear data structure that consists of a series of _nodes_ that contain the data and which are _linked_ together.
 
-For more detailed information see the [article](linkedlist.pdf) in this directory.
+For more detailed information see the [article](doc/linkedlist.pdf) in the `doc` directory.
 
 ## Implementations
 Implementations of the linked list are presented here in C and in C++. These implementations are provided for educational purposes and are not tuned for production code.
