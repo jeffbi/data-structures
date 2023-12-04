@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File linkedlist.tex
+% Copyright (c) 2019--2023 Jeffrey K. Bienstadt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{article}
 \usepackage[T1]{fontenc}
 %\usepackage[top=1in,left=.75in, right=.75in, bottom=1in]{geometry}
@@ -88,7 +92,7 @@
 \begin{document}
   \title{An Introduction to Linked Lists}
   \author{Jeff Bienstadt}
-  \date{December 15, 2021}
+  \date{\textcopyright\ December 4, 2023}
   \maketitle
   \begin{abstract}
     This article presents the linked list data structure. It describes the layout of the linked list and the operations that can be performed with its use. Finally, it presents annotated source code for implementations in the C and \Cpp\ languages. The full source code, in both languages, including code to demonstrate the usage of linked lists in applications, is available for download from GitHub\footnote{\url{https://github.com/jeffbi/data-structures/tree/master/LinkedList/C}}\footnote{\url{https://github.com/jeffbi/data-structures/tree/master/LinkedList/C++}}.
@@ -147,8 +151,11 @@
     \label{fig:singlelinkedlist-dummy}
   \end{figure}
 
+  \subsection{Accessing a list element}
+  Unlike an array, a linked list is not a \emph{random-access} type of data structure, meaning you cannot simply access any given element with a single operation. To access the \emph{i}th element of a linked list, it is necessary to \emph{traverse} the list, node by node, until the \emph{i}th element is found. This means that accessing an element has $O(n)$ time complexity. This is worsened by the fact that since a given node can exist anywhere in memory, nodes are unlikely to be in adjacent memory locations, causing cache misses.
+
   \subsection{Traversing a singly-linked list}
-  Iterating accross a singly linked list is a bit more involved than simply using an index to reach an element in an array but the mechanism is still quite simple. Start at the head node, follow the pointer to the next node, and repeat until reaching the tail node, which is identified by its \emph{next} pointer being~$\phi$. The algorithm is shown in figure~\ref{fig:alg:singlelinkedlist-traverse}.
+  Iterating across a singly linked list is a bit more involved than simply using an index to reach an element in an array but the mechanism is still quite simple. Start at the head node, follow the pointer to the next node, and repeat until reaching the tail node, which is identified by its \emph{next} pointer being~$\phi$. The algorithm is shown in figure~\ref{fig:alg:singlelinkedlist-traverse}.
   \begin{figure}[h]
   \begin{algorithm}
     begin
@@ -163,10 +170,13 @@
   To locate a specific node, while iterating over the list compare the data portion of the node to the target data value.
   \subsection{Adding nodes}
   Linked lists do not have a fixed length. They may grow or shrink to whatever size is needed, constrained only by available memory. There are procedures for appending nodes to the end of the list, prepending nodes at the front of the list, and for inserting a new node into a list.
-  \subsubsection{Inserting into a singly-linked list}
-  Inserting a node into a singly-linked list requires a few steps, but is generally more efficient than inserting an element into an array. To insert an element into an array, each following element must be moved down a position to make room for the new element. This is not the case with a linked list since each node points to its next node, wherever it may be in memory. Thus, a new node is inserted simply by manipulating the pointers.
 
-  When inserting a new node into a singly-linked list, because the nodes point in only one direction, the new node in usually inserted \emph{after} a specified node. To insert a new node before a given node would require traversing the linked list until finding the node that precedes the desired node and inserting after that node.
+  One advantage of a linked list over an array is that adding a new node to the list is a constant time ($O(1)$) operation. Adding an element to an array will likely require that portions of existing data be copied to make room for a new element, and the entire array my need to be copied into newly-allocated memory if there is not enough room in the array for the new element. A new element is added to a linked list simply by creating a new node and manipulating pointers.
+
+  \subsubsection{Inserting into a singly-linked list}
+  Inserting a node into a singly-linked list requires a few steps, but is generally more efficient than inserting an element into an array. To insert an element into an array, each following element must be moved down a position to make room for the new element. This is not the case with a linked list since each node points to its next node, wherever it may be in memory.
+
+  When inserting a new node into a singly-linked list, because the nodes point in only one direction, the new node in usually inserted \emph{after} a specified node. To insert a new node before a given node would require traversing the linked list until the node that precedes the desired node is found, and inserting after that node.
 
   The algorithm for inserting into a singly-linked list is presented in figure~\ref{fig:alg:singlelinkedlist-insert}.
   \begin{figure}[h]
@@ -273,7 +283,7 @@
   It is important to set the new node's next pointer to $\phi$ before changing the original tail node's pointer, to avoid having a brief time in which the new node is not a valid tail node.
 
   \subsection{Removing nodes}
-  Removing a node from a singly-linked list is similar to the insertion process. Since there is no direct access to a node's previous node it is necessary to remove the node \emph{after} a given node.
+  Removing a node from a singly-linked list is similar to the insertion process. The actual removal is, like insertion, a $O(1)$ constant-time operation. Since there is no direct access to a node's previous node it is necessary to remove the node \emph{after} a given node.
   Figure~\ref{fig:singlelinkedlist-beforeremove} shows a singly-linked list with a node to be removed, node~C.
   \begin{figure}[H]
     \centering
@@ -299,7 +309,7 @@
     \label{fig:singlelinkedlist-beforeremove}
   \end{figure}
 
-  The following steps remove node~C by removing the node that comes after node~B in the linked list. Of course the first step is to locate node~B, which requires traversing the linked list until a node's next node is the one to be removed.
+  The following steps remove node~C by removing the node that comes after node~B in the linked list. Of course the first step is to locate node~B, which requires traversing the linked list until a node's next node is the one to be removed, which is a $O(n)$ linear-time operation.
 
   Once node B, the node previous to the node to be removed, is found, the \emph{next} pointer from node C, the node to be removed, is copied to node B's \emph{next} pointer, resulting in the \emph{next} pointers for both nodes~A and B pointing to node D, as shown in figure~\ref{fig:singlelinkedlist-removelinkaround}.
   \begin{figure}[H]
@@ -407,7 +417,7 @@
 %  \end{figure}
 
   \subsection{Traversing a doubly-linked list}
-  Traversing a doubly-linked list is exactly the same as with a singly-list list: follow each node's next pointer until the node that has no next pointer. One advantage of a doubly-linked list is that it can be traversed backward as well as forward. Follow each node's previous-node pointer until reaching the head node which has no previous-node pointer.
+  Traversing a doubly-linked list is exactly the same as with a singly-list list: follow each node's next pointer until the node that has no next pointer. One advantage of a doubly-linked list is that it can be traversed backward as well as forward: follow each node's previous-node pointer until reaching the head node which has no previous-node pointer.
   \subsection{Adding nodes}
   Like singly-linked lists, doubly-linked lists do not have a fixed length and may grow or shrink to whatever size is needed, constrained only by available memory. New nodes may be easily appended to the end, prepended to the beginning, or inserted anywhere inside the linked list.
   \subsubsection{Inserting into a doubly-linked list}
@@ -604,6 +614,36 @@
 
   If the node to be removed is the head or tail node, the implementation must take care to not attempt to have a non-existant node point somewhere.
 
+  \section{Using Linked Lists}\label{sect:usage}
+  Linked lists are used in a variety of situations, such as when insertion or removal of an item into a collection needs to be fast, or when the size of a collection is not known in advance.
+
+  It is common in C-language APIs for a function to return a pointer to the beginning of a linked list. Imagine a function that retrieves a list of printer names. Rather than require one function call to determine how many names will be returned, require the user to allocate memory for an array of the given size, and another function call to fill the array, the API can provide a single function that returns the head of a linked list of names. Each list node might look like
+  \begin{lstc}[firstnumber=1]
+typedef struct NameNode_ {
+  const char        *name;
+  struct NameNode_  *next;
+} NameNode;\end{lstc}
+  The code to retrieve and process the printer names would look something like
+  \begin{lstc}[firstnumber=1]
+NameNode *list = get_printer_names();
+NameNode *node = list;  /* start at the head of the list */
+while (node != NULL) {
+  /* do something with the name in node->name */
+  ...
+  node = node->next;
+}\end{lstc}
+  Of course, the API would require a companion function to free the linked list when the user is done with it. The implementation of such a function might look like:
+  \begin{lstc}[firstnumber=1]
+void free_name_list(NameNode *head) {
+  NameNode *node = head;
+  while (node) {
+    NameNode *next = node->next;
+    free(node);
+    node = next;
+  }
+}\end{lstc}
+  Linked lists are also used when implementing other data structures such as stacks and queues, acting as the underlying data structure.
+
   \part{Implementation}\label{part:implementation}
   This part provides sample implementations of linked lists, in both the C and \Cpp\ languages. The C program implements a singly-linked list, and is simple and straightforward, while the \Cpp\ implementation utilizes an Object Oriented Programming approach to create a doubly-linked list.
   \section{C Implementation}
@@ -618,7 +658,9 @@ typedef struct _sll_node
   int data;
   struct _sll_node *next;
 } sll_node;\end{lstc}
-  Following node type definition are prototypes for the functions operating on the linked list.
+  The \verb|data| member contains the linked list node data. The \verb|next| member is a pointer to the next node in the linked list.
+
+  Following the node type definition are prototypes for the functions operating on the linked list.
   \begin{lstc}
 sll_node *sll_create_node(int data);
 sll_node *sll_find_data(sll_node *start, int data);
@@ -1046,4 +1088,5 @@ public:
 
   A complete implementation of a singly-linked list in \Cpp\ is available for download from the git repository.
 
+  As an exercise, you are encouraged to implement both singly- and doubly-linked list in the programming languages of your choice.
 \end{document}
