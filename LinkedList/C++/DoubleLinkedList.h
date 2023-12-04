@@ -1,7 +1,7 @@
 /// \file   DoubleLinkedList.h
 /// \brief  Implementation of a doubly-linked list in C++
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2021 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #ifndef INC_DOUBLE_LINKED_LIST
 #define INC_DOUBLE_LINKED_LIST

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Jeffrey K. Bienstadt
+// Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #include <stdio.h>
 #include <stdlib.h>

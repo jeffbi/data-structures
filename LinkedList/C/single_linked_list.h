@@ -1,7 +1,7 @@
 /// \file   single_linked_list.h
 /// \brief  structure definition and function declarations for a singly-linked list in C.
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2019 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #ifndef INC_SINGLE_LINKED_LIST_H
 #define INC_SINGLE_LINKED_LIST_H

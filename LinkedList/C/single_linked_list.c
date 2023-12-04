@@ -1,7 +1,7 @@
 /// \file   single_linked_list.c
 /// \brief  Implementation of linked list in C.
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2019 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #include <stdlib.h> // for malloc/free
 

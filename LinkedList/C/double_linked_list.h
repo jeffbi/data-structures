@@ -1,7 +1,7 @@
 /// \file   double_linked_list.h
 /// \brief  structure definition and function declarations for a doubly-linked list in C.
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2021 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #ifndef INC_DOUBLE_LINKED_LIST_H
 #define INC_DOUBLE_LINKED_LIST_H

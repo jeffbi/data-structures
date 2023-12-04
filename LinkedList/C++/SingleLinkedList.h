@@ -1,7 +1,7 @@
 /// \file   SingleLinkedList.h
 /// \brief  Implementation of a singly-linked list in C++
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2021 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2019--2023 Jeffrey K. Bienstadt
 
 #ifndef INC_SINGLE_LINKED_LIST
 #define INC_SINGLE_LINKED_LIST
