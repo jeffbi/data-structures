@@ -1,10 +1,12 @@
 /// \file   Stack.h
 /// \brief  Implementation of a stack in C++.
 /// \author Jeffrey K. Bienstadt
-/// \copyright  Copyright (c) 2019 Jeffrey K. Bienstadt
+/// \copyright  Copyright (c) 2022--2024 Jeffrey K. Bienstadt
 
 #ifndef INC_STACK
 #define INC_STACK
+
+#include <cassert>
 
 /// \brief  An implementation of a stack, based on a singly-linked list.
 template <typename T>
@@ -12,7 +14,7 @@ class Stack
 {
 public:
 
-    /// \brief  Default-construct a Stack
+    /// \brief  Default-construct an empty Stack.
     Stack()
       : _size{0},
         _head{nullptr}
@@ -47,6 +49,7 @@ public:
     /// \brief  Remove the item on the top of the stack.
     void pop()
     {
+        assert(!is_empty());
         node *old_head = _head;
 
         // Remove the node at the head and make the next node the new head.
@@ -58,8 +61,22 @@ public:
     /// \brief  Access the top item on the stack.
     ///
     /// \return A const reference to the top element in the stack.
+    ///
+    /// Calling \c top on an empty stack is an error.
     const T &top() const
     {
+        assert(!is_empty());
+        return _head->_data;
+    }
+
+    /// \brief  Access the top item on the stack.
+    ///
+    /// \return A reference to the top element in the stack.
+    ///
+    /// Calling \c top on an empty stack is an error.
+    T &top()
+    {
+        assert(!is_empty());
         return _head->_data;
     }
 
@@ -84,7 +101,7 @@ private:
     struct node
     {
         // Construct a new linked list node with the pushed data item
-        node(const T& value)
+        explicit node(const T& value)
           : _data{value},
             _next{nullptr}
         {}
